@@ -11,12 +11,14 @@
             background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('img/Kharchi_puja_in_tripura.jpg?width=1200');
             background-size: cover;
             background-position: center;
-            height: 350px;
+            height: 300px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             color: #fff;
+            margin-top: -1px;
+            /* Overlap header slightly if needed or just flows */
         }
 
         .events-hero h1 {
@@ -139,6 +141,7 @@
 
             <nav id="mainNav">
                 <a href="/">Home</a>
+                <a href="/about-us">About Us</a>
                 <a href="/destinations">Destinations</a>
                 <a href="/experiences">Experiences</a>
                 <a href="/events" style="color:#fff; border-bottom: 2px solid var(--accent);">Events</a>
@@ -149,7 +152,7 @@
         </div>
     </header>
 
-    <main>
+    <main class="destinations-main">
         <div class="events-hero">
             <h1>Festivals & Events</h1>
         </div>
