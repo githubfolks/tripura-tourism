@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Experiences - Tripura Natural Trails & Resort</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Reusing Destinations Page styles for consistency */
+        .destinations-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('img/Neermahal_palace_at_Tripura.jpg?width=1200');
+            background-size: cover;
+            background-position: center;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            margin-top: -1px;
+        }
+
+        .destinations-hero h1 {
+            font-size: 36px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .filter-bar {
+            background: #fff;
+            padding: 20px;
+            margin-top: -40px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .filter-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 200px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: var(--accent);
+            color: #3e2723;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            align-self: flex-end;
+            height: 42px;
+        }
+
+        .dest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .dest-card {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .dest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dest-img {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .dest-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .dest-card:hover .dest-img img {
+            transform: scale(1.05);
+        }
+
+        .dest-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dest-title {
+            font-size: 18px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .dest-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .dest-link {
+            display: inline-block;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 1px;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px;
+            transition: border-color 0.2s;
+        }
+
+        .dest-card:hover .dest-link {
+            border-color: var(--accent);
+            color: #ffa000;
+        }
+
+        main.destinations-main {
+            padding-top: 0;
+            max-width: 100%;
+            margin-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .content-container {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 16px 60px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-block">
+                <div class="logo-icon">
+                    TOURISM<br>LOGO
+                </div>
+                <div class="logo-text">
+                    <strong>TRIPURA TOURISM</strong>
+                    <span>Tripura Natural Trails & resort, Government of Tripura</span>
+                </div>
+            </div>
+
+            <div class="nav-toggle" id="navToggle">
+                <span></span><span></span><span></span>
+            </div>
+
+            <nav id="mainNav">
+                <a href="/">Home</a>
+                <a href="/destinations">Destinations</a>
+                <a href="/experiences" style="color:#fff; border-bottom: 2px solid var(--accent);">Experiences</a>
+                <a href="/events">Events</a>
+                <a href="/planner">Plan Your Trip</a>
+                <a href="/contact">Contact</a>
+                <a href="/booking" class="nav-cta">Book Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="destinations-main">
+        <div class="destinations-hero">
+            <h1>Curated Experiences</h1>
+        </div>
+
+        <div class="content-container">
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select>
+                        <option>All Categories</option>
+                        <option>Adventure & Wildlife</option>
+                        <option>Heritage & Culture</option>
+                        <option>Spiritual Journeys</option>
+                        <option>Leisure & Relaxation</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Duration</label>
+                    <select>
+                        <option>Any Duration</option>
+                        <option>Half Day (3-5 hrs)</option>
+                        <option>Full Day (8-10 hrs)</option>
+                        <option>Multi-Day Packages</option>
+                    </select>
+                </div>
+                <button class="filter-btn">Explore</button>
+            </div>
+
+            <!-- Experiences Grid -->
+            <div class="dest-grid">
+                <!-- Card 1 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Deer,_Sepahijala_WLS.jpg?width=600" alt="Forest Safari">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Forest Jeep Safari</h3>
+                        <p class="dest-desc">Venture into the deep forests with expert naturalists to spot bison,
+                            clouded leopards, and exotic birds.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Village_Eco_Stay.jpg?width=600" alt="Cultural Evening">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Cultural Evening</h3>
+                        <p class="dest-desc">Witness the vibrant folk dances and music of the local tribes, followed by
+                            a traditional dinner.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Village_Eco_Stay.jpg?width=600" alt="Village Eco-Stay">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Village Eco-Stay</h3>
+                        <p class="dest-desc">Immerse yourself in rural life, stay in eco-friendly bamboo cottages, and
+                            learn local crafts.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Village_Eco_Stay.jpg?width=600" alt="Lake boating">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Sunset Lake Boating</h3>
+                        <p class="dest-desc">A serene boat ride on Rudrasagar or Dumboor lake as the sun sets over the
+                            horizon.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Village_Eco_Stay.jpg?width=600" alt="Temple Trail">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Spiritual Temple Trail</h3>
+                        <p class="dest-desc">A guided pilgrimage to the most revered temples and sacred sites across the
+                            state.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="dest-card">
+                    <div class="dest-img">
+                        <img src="img/Village_Eco_Stay.jpg?width=600" alt="Tea Garden Walk">
+                    </div>
+                    <div class="dest-info">
+                        <h3 class="dest-title">Tea Garden Nature Walk</h3>
+                        <p class="dest-desc">Walk through lush green tea estates, learn about tea processing, and enjoy
+                            a fresh brew.</p>
+                        <a href="#" class="dest-link">View Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div>
+                © <span id="year"></span> Department of Tourism, Government of [State]. All rights reserved.
+            </div>
+            <div class="footer-links">
+                <a href="/rti">RTI / Citizen Charter</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms &amp; Conditions</a>
+                <a href="/refund-policy">Refund &amp; Cancellation</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+
+</html>

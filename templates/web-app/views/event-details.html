@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Event Details - Tripura Natural Trails & Resort</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .detail-hero {
+            height: 50vh;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)), url('img/Neermahal.jpg?width=1200');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 60px;
+            color: #fff;
+        }
+
+        .detail-hero-content {
+            max-width: 1180px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .detail-date {
+            background: var(--accent);
+            color: #3e2723;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 14px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .detail-title {
+            font-size: 48px;
+            font-weight: 300;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .detail-container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .detail-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 40px;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .gallery-item {
+            height: 180px;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Graybox / Lightbox Overlay */
+        .lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            /* Dark gray background */
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .lightbox-content img {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 4px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #fff;
+            font-size: 30px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--accent);
+        }
+
+        /* New Layout Styles */
+        .page-layout {
+            display: flex;
+            max-width: 1200px;
+            /* Wider container for 2 cols */
+            margin: 60px auto;
+            padding: 0 20px;
+            gap: 40px;
+            align-items: flex-start;
+            /* For sticky sidebar */
+        }
+
+        .sidebar {
+            flex: 0 0 320px;
+            /* Fixed width sidebar */
+            position: sticky;
+            top: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            /* Takes remaining space */
+            min-width: 0;
+            /* Prevents overflow issues */
+        }
+
+        /* Sidebar Card Styles (Compact) */
+        .sidebar-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: flex;
+            /* Horizontal row layout for sidebar items */
+            flex-direction: column;
+        }
+
+        .sidebar-card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+        }
+
+        .sidebar-card-content {
+            padding: 15px;
+        }
+
+        @media (max-width: 900px) {
+            .page-layout {
+                flex-direction: column;
+                /* Sidebar on top? Or Main content on top. Let's stick to simple column dropping sidebar to bottom or top. Standard is content first. */
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-block">
+                <a href="/"
+                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px;">
+                    <div class="logo-icon">TOURISM<br>LOGO</div>
+                    <div class="logo-text">
+                        <strong>TRIPURA TOURISM</strong>
+                        <span>Tripura Natural Trails & resort, Government of Tripura</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="nav-toggle" id="navToggle">
+                <span></span><span></span><span></span>
+            </div>
+
+            <nav id="mainNav">
+                <a href="/">Home</a>
+                <a href="/destinations">Destinations</a>
+                <a href="/experiences">Experiences</a>
+                <a href="/events" style="border-bottom: 2px solid var(--accent);">Events</a>
+                <a href="/planner">Plan Your Trip</a>
+                <a href="/contact">Contact</a>
+                <a href="/booking" class="nav-cta">Book Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="detail-hero">
+        <div class="detail-hero-content">
+            <span class="detail-date">December 2024</span>
+            <h1 class="detail-title">Neermahal Water Festival</h1>
+        </div>
+    </div>
+
+    <div class="page-layout">
+        <!-- Left Column: Other Events -->
+        <aside class="sidebar">
+            <h3 class="section-title" style="font-size: 20px; border-bottom: none; margin-bottom: 15px;">Other Events
+            </h3>
+
+            <!-- List of other events -->
+            <div class="sidebar-list">
+                <!-- Card 1 -->
+                <article class="sidebar-card">
+                    <img src="img/Kharchi_puja_in_tripura.jpg?width=600" alt="Kharchi Puja">
+                    <div class="sidebar-card-content">
+                        <span
+                            style="font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase;">July
+                            2025</span>
+                        <h4 style="font-size: 16px; margin: 5px 0; color: var(--primary-dark);">Kharchi Puja</h4>
+                        <a href="#"
+                            style="font-size: 11px; font-weight: 700; color: var(--primary); text-decoration: none;">VIEW
+                            DETAILS</a>
+                    </div>
+                </article>
+
+                <!-- Card 2 -->
+                <article class="sidebar-card">
+                    <img src="img/Vanghmun,_Jampui_Hill.jpg?width=600" alt="Orange Festival">
+                    <div class="sidebar-card-content">
+                        <span
+                            style="font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase;">November
+                            2025</span>
+                        <h4 style="font-size: 16px; margin: 5px 0; color: var(--primary-dark);">Orange Festival</h4>
+                        <a href="#"
+                            style="font-size: 11px; font-weight: 700; color: var(--primary); text-decoration: none;">VIEW
+                            DETAILS</a>
+                    </div>
+                </article>
+
+                <!-- Card 3 -->
+                <article class="sidebar-card">
+                    <img src="img/Hojagiri_dance.jpg?width=600" alt="Garia Puja">
+                    <div class="sidebar-card-content">
+                        <span
+                            style="font-size: 10px; font-weight: 700; color: var(--accent); text-transform: uppercase;">April
+                            2025</span>
+                        <h4 style="font-size: 16px; margin: 5px 0; color: var(--primary-dark);">Garia Puja</h4>
+                        <a href="#"
+                            style="font-size: 11px; font-weight: 700; color: var(--primary); text-decoration: none;">VIEW
+                            DETAILS</a>
+                    </div>
+                </article>
+            </div>
+        </aside>
+
+        <!-- Right Column: Main Details -->
+        <main class="main-content">
+            <div class="detail-section">
+                <h2 class="section-title">About the Event</h2>
+                <div class="detail-text">
+                    <p>
+                        The Neermahal Water Festival is one of the most vibrant celebrations in Tripura, held annually
+                        at
+                        the iconic Rudrasagar Lake.
+                        Centered around the majestic Neermahal ("Water Palace"), built by King Bir Bikram Kishore
+                        Manikya in
+                        1930, this festival
+                        brings the lake to life with energy, color, and tradition.
+                    </p>
+                    <p>
+                        The highlight of the festival is the thrilling boat race, where traditional long boats competed
+                        against each other to the
+                        rhythm of drums and cheers from thousands of spectators lining the shores. Beyond the races,
+                        visitors can witness
+                        mesmerizing swimming competitions and indulge in local cultural programs featuring folk music
+                        and
+                        dance that continue late into the evening.
+                    </p>
+                    <p>
+                        The palace itself is illuminated magnificently, casting a golden reflection on the waters of
+                        Rudrasagar, creating a magical
+                        atmosphere for photographers and tourists alike.
+                    </p>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h2 class="section-title">Event Gallery</h2>
+                <p style="font-size: 13px; color: #777; margin-bottom: 15px;">Click on any image to view it in full
+                    screen.</p>
+
+                <div class="gallery-grid">
+                    <!-- Gallery Image 1 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal.jpg?width=600" data-full="img/Neermahal.jpg?width=1200"
+                            alt="Neermahal Palace View">
+                    </div>
+                    <!-- Gallery Image 2 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal_29122015.jpg?width=600"
+                            data-full="img/Neermahal_29122015.jpg?width=1200" alt="Boat Ride">
+                    </div>
+                    <!-- Gallery Image 3 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal,_Tripura.JPG?width=600"
+                            data-full="img/Neermahal,_Tripura.JPG?width=1200" alt="Palace Architecture">
+                    </div>
+                    <!-- Gallery Image 4 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal-The_marvelous_water_palace_of_Tripura.jpg?width=600"
+                            data-full="img/Neermahal-The_marvelous_water_palace_of_Tripura.jpg?width=1200"
+                            alt="Water Reflections">
+                    </div>
+                    <!-- Gallery Image 5 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal191.jpg?width=600" data-full="img/Neermahal191.jpg?width=1200"
+                            alt="Night Illumination">
+                    </div>
+                    <!-- Gallery Image 6 -->
+                    <div class="gallery-item">
+                        <img src="img/Neermahal192.jpg?width=600" data-full="img/Neermahal192.jpg?width=1200"
+                            alt="Evening View">
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div>
+                © <span id="year"></span> Department of Tourism. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox Overlay -->
+    <div class="lightbox-overlay" id="lightbox">
+        <div class="lightbox-content">
+            <span class="close-btn" id="lightboxClose">&times;</span>
+            <img src="" alt="Full Screen Image" id="lightboxImg">
+        </div>
+    </div>
+
+    <script src="/js/script.js"></script>
+    <script>
+        // Inline script for lightbox to ensure immediate functionality without caching issues
+        document.addEventListener('DOMContentLoaded', () => {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const closeBtn = document.getElementById('lightboxClose');
+            const galleryItems = document.querySelectorAll('.gallery-item img');
+
+            if (lightbox && lightboxImg && closeBtn) {
+                // Open Lightbox
+                galleryItems.forEach(item => {
+                    item.addEventListener('click', () => {
+                        const fullSrc = item.getAttribute('data-full');
+                        if (fullSrc) {
+                            lightboxImg.src = fullSrc;
+                            lightbox.classList.add('active');
+                        }
+                    });
+                });
+
+                // Close Lightbox
+                closeBtn.addEventListener('click', () => {
+                    lightbox.classList.remove('active');
+                    setTimeout(() => { lightboxImg.src = ''; }, 300); // Clear source after fade out
+                });
+
+                // Close on clicking outside
+                lightbox.addEventListener('click', (e) => {
+                    if (e.target === lightbox) {
+                        lightbox.classList.remove('active');
+                        setTimeout(() => { lightboxImg.src = ''; }, 300);
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

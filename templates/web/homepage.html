@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title> Tripura Natural Trails & Resort - Official Booking Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <header>
+    <div class="nav-container">
+      <div class="logo-block">
+        <div class="logo-icon">
+          TOURISM<br>LOGO
+        </div>
+        <div class="logo-text">
+          <strong>TRIPURA TOURISM</strong>
+          <span>Tripura Natural Trails & resort, Government of Tripura</span>
+        </div>
+      </div>
+
+      <div class="nav-toggle" id="navToggle">
+        <span></span><span></span><span></span>
+      </div>
+
+      <nav id="mainNav">
+        <a href="/home">Home</a>
+        <a href="/destinations">Destinations</a>
+        <a href="/experiences">Experiences</a>
+        <a href="/events">Events</a>
+        <a href="/planner">Plan Your Trip</a>
+        <a href="/contact">Contact</a>
+        <a href="/booking" class="nav-cta">Book Now</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <!-- LEFT SIDE TEXT -->
+      <div>
+        <div class="hero-tag">
+          <div class="hero-tag-dot"></div>
+          Official Tourism & Booking Portal
+        </div>
+        <h1>
+          Discover <span class="state">TRIPURA</span><br>
+          Forests, Culture & Heritage
+        </h1>
+        <p class="hero-subtitle">
+          Plan your next holiday with verified government accommodations, curated tour packages,
+          and authentic local experiences across [State Name].
+        </p>
+        <div class="hero-badges">
+          <div class="hero-badge">Government Approved Stays</div>
+          <div class="hero-badge">Secure Online Payments</div>
+          <div class="hero-badge">Zero Convenience Fee*</div>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <strong>40+</strong>
+            Destinations
+          </div>
+          <div class="hero-stat">
+            <strong>120+</strong>
+            Govt. Accommodations
+          </div>
+          <div class="hero-stat">
+            <strong>365</strong>
+            Days of Experiences
+          </div>
+        </div>
+        <p class="hero-footnote">
+          *As per current departmental policy. Terms & conditions apply.
+        </p>
+      </div>
+
+      <!-- RIGHT SIDE BOOKING CARD -->
+      <div class="hero-visual">
+        <div class="booking-card" id="booking">
+          <h3>Book Your Stay</h3>
+          <small>Search govt. guest houses, lodges & tourism resorts</small>
+
+          <form action="/booking/search" method="GET" id="bookingForm">
+            <div class="booking-grid">
+              <div class="booking-field full">
+                <label for="destination">Destination</label>
+                <select id="destination" name="destination" required>
+                  <option value="">Select destination</option>
+                  <option value="capital_city">Capital City</option>
+                  <option value="hill_station">Hill Station</option>
+                  <option value="wildlife_sanctuary">Wildlife Sanctuary</option>
+                  <option value="river_front">River / Lake Side</option>
+                </select>
+              </div>
+
+              <div class="booking-field">
+                <label for="checkin">Check-in</label>
+                <input type="date" id="checkin" name="checkin" required />
+              </div>
+
+              <div class="booking-field">
+                <label for="checkout">Check-out</label>
+                <input type="date" id="checkout" name="checkout" required />
+              </div>
+
+              <div class="booking-field">
+                <label for="guests">Guests</label>
+                <input type="number" id="guests" name="guests" min="1" value="2" required />
+              </div>
+
+              <div class="booking-field">
+                <label for="rooms">Rooms</label>
+                <input type="number" id="rooms" name="rooms" min="1" value="1" required />
+              </div>
+
+              <div class="booking-field full">
+                <label for="type">Booking Type</label>
+                <select id="type" name="type">
+                  <option value="stay">Stay Only</option>
+                  <option value="package">Package (Stay + Tour)</option>
+                  <option value="experience">Experience / Activity</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="booking-submit">
+              <button type="submit">Search &amp; Book</button>
+            </div>
+            <p class="booking-note">
+              By proceeding, you agree to the Tourism Department’s booking, cancellation &amp; refund
+              policies.
+            </p>
+          </form>
+        </div>
+
+        <div class="hero-badge-floating">
+          <span>New</span> Integrated booking for stays, packages & experiences.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <!-- QUICK HIGHLIGHTS -->
+    <section class="section">
+      <div class="highlights">
+        <div class="highlight-card">
+          <div class="highlight-title">Top Destinations</div>
+          <div class="highlight-tagline">From misty hills to serene river valleys</div>
+          <div class="highlight-meta">Explore handpicked routes, local attractions & best seasons.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-title">Experiences & Activities</div>
+          <div class="highlight-tagline">Safaris, cultural tours, eco-trails & more</div>
+          <div class="highlight-meta">Book department-authorized experiences with trained guides.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-title">Upcoming Events</div>
+          <div class="highlight-tagline">Festivals, fairs & cultural calendars</div>
+          <div class="highlight-meta">Plan your trip around flagship tourism festivals.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTINATIONS -->
+    <section class="section" id="destinations">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Featured Destinations</div>
+          <div class="section-subtitle">Discover iconic places curated by the Tourism Department.</div>
+        </div>
+        <a href="/destinations" class="section-link">View all destinations →</a>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/destination1.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Hill Station Retreat</div>
+            <div class="card-meta">1200m • 3 hrs from Capital</div>
+            <p class="card-text">
+              Cool climate, tea gardens and panoramic viewpoints ideal for weekend getaways.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Best: Oct–Mar</span>
+              <a href="/destinations/hill-station" class="link-button">View details</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/destination2.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Wildlife Sanctuary</div>
+            <div class="card-meta">Core forest • Guided safaris</div>
+            <p class="card-text">
+              Rich biodiversity, birding trails and eco huts maintained by the department.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Eco-Tourism</span>
+              <a href="/destinations/wildlife-sanctuary" class="link-button">View details</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/destination3.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Riverfront Heritage Town</div>
+            <div class="card-meta">Historic ghats • Local markets</div>
+            <p class="card-text">
+              Experience traditional architecture, crafts, and local cuisine by the riverside.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Culture & Food</span>
+              <a href="/destinations/riverfront-town" class="link-button">View details</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- EXPERIENCES -->
+    <section class="section" id="experiences">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Experiences & Activities</div>
+          <div class="section-subtitle">Book authentic, department-approved experiences.</div>
+        </div>
+        <a href="/experiences" class="section-link">Browse all experiences →</a>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/experience1.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Forest Safari</div>
+            <div class="card-meta">Morning & evening slots</div>
+            <p class="card-text">
+              Guided jeep safaris with trained naturalists inside notified tourism zones.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Book Online</span>
+              <a href="/booking/experience?safari" class="link-button">Book safari</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/experience2.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Cultural Evening</div>
+            <div class="card-meta">Folk music & dance</div>
+            <p class="card-text">
+              Enjoy traditional performances, handicrafts stalls & local cuisine in one evening.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Daily (seasonal)</span>
+              <a href="/booking/experience?culture" class="link-button">Reserve seat</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-img" style="background-image:url('images/experience3.jpg');"></div>
+          <div class="card-body">
+            <div class="card-title">Village Eco-Stay</div>
+            <div class="card-meta">Community-run homestays</div>
+            <p class="card-text">
+              Stay with local families and experience rural life, cuisine and traditions.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Responsible Tourism</span>
+              <a href="/booking/experience?eco-stay" class="link-button">View options</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- EVENTS -->
+    <section class="section" id="events">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Events & Festivals</div>
+          <div class="section-subtitle">Align your trip with flagship tourism events.</div>
+        </div>
+        <a href="/events" class="section-link">Full calendar →</a>
+      </div>
+
+      <div class="card-grid">
+        <article class="card">
+          <div class="card-body">
+            <div class="card-title">[State] Tourism Festival</div>
+            <div class="card-meta">15–20 Jan • Capital City</div>
+            <p class="card-text">
+              Cultural shows, food courts, handicraft bazaars and evening concerts at the riverfront.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Flagship Event</span>
+              <a href="/events/tourism-festival" class="link-button">Know more</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-body">
+            <div class="card-title">Monsoon Trails</div>
+            <div class="card-meta">Jul–Sep • Multiple locations</div>
+            <p class="card-text">
+              Department-guided nature walks, waterfall tours and photography trails across forests.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Seasonal</span>
+              <a href="/events/monsoon-trails" class="link-button">Know more</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-body">
+            <div class="card-title">Riverfront Culture Nights</div>
+            <div class="card-meta">Every Sat • Riverfront Town</div>
+            <p class="card-text">
+              Evening aartis, local bands, light & sound shows along the ghats and promenades.
+            </p>
+            <div class="card-footer">
+              <span class="chip">Weekly</span>
+              <a href="/events/riverfront-nights" class="link-button">Know more</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PLAN YOUR TRIP / CONTACT STRIP -->
+    <section class="section" id="planner">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Plan Your Trip</div>
+          <div class="section-subtitle">Need help? Our tourism offices and helplines are ready to assist you.
+          </div>
+        </div>
+      </div>
+      <div class="highlights">
+        <div class="highlight-card">
+          <div class="highlight-title">Travel Info</div>
+          <div class="highlight-tagline">How to reach, best season & safety tips</div>
+          <div class="highlight-meta">Check road, rail and air connectivity from major cities.</div>
+        </div>
+        <div class="highlight-card">
+          <div class="highlight-title">Tourism Helpdesk</div>
+          <div class="highlight-tagline">24x7 helpline (toll-free)</div>
+          <div class="highlight-meta">Helpline: 1800-XXX-XXXX • Email: helpdesk@[state]tourism.gov.in</div>
+        </div>
+        <div class="highlight-card" id="contact">
+          <div class="highlight-title">Write to Us</div>
+          <div class="highlight-tagline">Share feedback or request custom itineraries</div>
+          <div class="highlight-meta">Use the enquiry form on the Contact page to reach our team.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div>
+        © <span id="year"></span> Department of Tourism, Government of [State]. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="/rti">RTI / Citizen Charter</a>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms &amp; Conditions</a>
+        <a href="/refund-policy">Refund &amp; Cancellation</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/script.js"></script>
+
+</body>
+
+</html>

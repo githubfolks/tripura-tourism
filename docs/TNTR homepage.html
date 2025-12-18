@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title> Tripura Natural Trails & Resort – Official Booking Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --primary: #00695c;
+      --primary-dark: #004d40;
+      --accent: #ffb300;
+      --bg-light: #f1f8e9;
+      --text-main: #263238;
+      --text-muted: #607d8b;
+      --card-bg: #ffffff;
+      --shadow-soft: 0 8px 18px rgba(0,0,0,0.08);
+      --radius-lg: 16px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color: var(--text-main);
+      background: #fafafa;
+      line-height: 1.5;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* HEADER / NAVBAR */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(0,77,64,0.96);
+      color: #fff;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    }
+
+    .nav-container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo-block {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+    }
+
+    .logo-text strong {
+      font-size: 15px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 14px;
+    }
+
+    nav a {
+      color: #e0f2f1;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.2s ease-out;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .nav-cta {
+      padding: 6px 14px;
+      background: var(--accent);
+      color: #3e2723;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .nav-cta:hover {
+      background: #ffa000;
+    }
+
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .nav-toggle span {
+      width: 22px;
+      height: 2px;
+      background: #fff;
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        position: absolute;
+        left: 0;
+        top: 58px;
+        right: 0;
+        background: var(--primary-dark);
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px 16px;
+        transform: translateY(-120%);
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease-out;
+      }
+
+      nav.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .nav-cta {
+        align-self: flex-start;
+      }
+
+      .nav-toggle {
+        display: flex;
+      }
+    }
+
+    /* HERO / BOOKING */
+
+    .hero {
+      background: radial-gradient(circle at top left, #80cbc4 0, #004d40 40%, #001a17 100%);
+      color: #e0f2f1;
+      padding: 32px 16px 40px;
+    }
+
+    .hero-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.35);
+      padding: 4px 10px;
+      border-radius: 50px;
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .hero-tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffeb3b;
+    }
+
+    .hero h1 {
+      font-size: clamp(26px, 4vw, 34px);
+      margin-bottom: 10px;
+    }
+
+    .hero h1 span.state {
+      color: #ffecb3;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      max-width: 540px;
+      margin-bottom: 14px;
+      color: #cfd8dc;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
+      font-size: 11px;
+    }
+
+    .hero-badge {
+      padding: 5px 10px;
+      border-radius: 50px;
+      border: 1px solid rgba(224,242,241,0.4);
+      background: rgba(0,0,0,0.2);
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 11px;
+      color: #cfd8dc;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .hero-footnote {
+      font-size: 11px;
+      color: #b0bec5;
+    }
+
+    .hero-visual {
+      position: relative;
+    }
+
+    .booking-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 16px;
+      color: #263238;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      z-index: 2;
+    }
+
+    .booking-card h3 {
+      font-size: 18px;
+      margin-bottom: 2px;
+    }
+
+    .booking-card small {
+      font-size: 11px;
+      color: #78909c;
+    }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 12px;
+      margin-top: 14px;
+      margin-bottom: 10px;
+    }
+
+    .booking-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .booking-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .booking-field label {
+      font-size: 11px;
+      color: #455a64;
+    }
+
+    .booking-field input,
+    .booking-field select {
+      padding: 7px 8px;
+      font-size: 13px;
+      border-radius: var(--radius-sm);
+      border: 1px solid #cfd8dc;
+      outline: none;
+    }
+
+    .booking-field input:focus,
+    .booking-field select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(0,105,92,0.2);
+    }
+
+    .booking-submit {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
+    }
+
+    .booking-submit button {
+      flex: 1;
+      padding: 9px 10px;
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .booking-submit button:hover {
+      background: var(--primary-dark);
+    }
+
+    .booking-note {
+      font-size: 10px;
+      color: #78909c;
+    }
+
+    .hero-badge-floating {
+      position: absolute;
+      right: 16px;
+      bottom: -16px;
+      background: rgba(0,0,0,0.45);
+      border-radius: 999px;
+      backdrop-filter: blur(6px);
+      padding: 6px 12px;
+      font-size: 11px;
+      color: #e0f2f1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hero-badge-floating span {
+      font-weight: 600;
+      color: #fff;
+    }
+
+    /* MAIN SECTIONS */
+
+    main {
+      max-width: 1180px;
+      margin: 18px auto 0;
+      padding: 0 16px 40px;
+    }
+
+    .section {
+      margin-top: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .section-link {
+      font-size: 12px;
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .hero-inner {
+        grid-template-columns: minmax(0,1fr);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .card-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .card-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+
+      .hero-inner {
+        gap: 20px;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .card-img {
+      height: 120px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .card-body {
+      padding: 10px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .card-text {
+      font-size: 12px;
+      color: #455a64;
+    }
+
+    .card-footer {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .chip {
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: var(--bg-light);
+      color: #33691e;
+      font-size: 10px;
+      border: 1px solid #c5e1a5;
+    }
+
+    .link-button {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+
+    /* HORIZONTAL HIGHLIGHTS */
+
+    .highlights {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .highlight-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      padding: 10px 12px;
+      box-shadow: var(--shadow-soft);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .highlight-title {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .highlight-tagline {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .highlight-meta {
+      font-size: 10px;
+      color: #78909c;
+    }
+
+    @media (max-width: 768px) {
+      .highlights {
+        grid-template-columns: minmax(0,1fr);
+      }
+    }
+
+    /* FOOTER */
+
+    footer {
+      background: #102621;
+      color: #90a4ae;
+      padding: 18px 16px 22px;
+      font-size: 11px;
+      margin-top: 12px;
+    }
+
+    .footer-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: space-between;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      color: #cfd8dc;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <div class="logo-block">
+      <div class="logo-icon">
+        TOURISM<br>LOGO
+      </div>
+      <div class="logo-text">
+        <strong>TRIPURA TOURISM</strong>
+        <span>Tripura Natural Trails & resort, Government of Tripura</span>
+      </div>
+    </div>
+
+    <div class="nav-toggle" id="navToggle">
+      <span></span><span></span><span></span>
+    </div>
+
+    <nav id="mainNav">
+      <a href="#home">Home</a>
+      <a href="#destinations">Destinations</a>
+      <a href="#experiences">Experiences</a>
+      <a href="#events">Events</a>
+      <a href="#planner">Plan Your Trip</a>
+      <a href="#contact">Contact</a>
+      <a href="#booking" class="nav-cta">Book Now</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <!-- LEFT SIDE TEXT -->
+    <div>
+      <div class="hero-tag">
+        <div class="hero-tag-dot"></div>
+        Official Tourism & Booking Portal
+      </div>
+      <h1>
+        Discover <span class="state">TRIPURA</span><br>
+        Forests, Culture & Heritage
+      </h1>
+      <p class="hero-subtitle">
+        Plan your next holiday with verified government accommodations, curated tour packages,
+        and authentic local experiences across [State Name].
+      </p>
+      <div class="hero-badges">
+        <div class="hero-badge">Government Approved Stays</div>
+        <div class="hero-badge">Secure Online Payments</div>
+        <div class="hero-badge">Zero Convenience Fee*</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <strong>40+</strong>
+          Destinations
+        </div>
+        <div class="hero-stat">
+          <strong>120+</strong>
+          Govt. Accommodations
+        </div>
+        <div class="hero-stat">
+          <strong>365</strong>
+          Days of Experiences
+        </div>
+      </div>
+      <p class="hero-footnote">
+        *As per current departmental policy. Terms & conditions apply.
+      </p>
+    </div>
+
+    <!-- RIGHT SIDE BOOKING CARD -->
+    <div class="hero-visual">
+      <div class="booking-card" id="booking">
+        <h3>Book Your Stay</h3>
+        <small>Search govt. guest houses, lodges & tourism resorts</small>
+
+        <form action="/booking/search" method="GET" id="bookingForm">
+          <div class="booking-grid">
+            <div class="booking-field full">
+              <label for="destination">Destination</label>
+              <select id="destination" name="destination" required>
+                <option value="">Select destination</option>
+                <option value="capital_city">Capital City</option>
+                <option value="hill_station">Hill Station</option>
+                <option value="wildlife_sanctuary">Wildlife Sanctuary</option>
+                <option value="river_front">River / Lake Side</option>
+              </select>
+            </div>
+
+            <div class="booking-field">
+              <label for="checkin">Check-in</label>
+              <input type="date" id="checkin" name="checkin" required />
+            </div>
+
+            <div class="booking-field">
+              <label for="checkout">Check-out</label>
+              <input type="date" id="checkout" name="checkout" required />
+            </div>
+
+            <div class="booking-field">
+              <label for="guests">Guests</label>
+              <input type="number" id="guests" name="guests" min="1" value="2" required />
+            </div>
+
+            <div class="booking-field">
+              <label for="rooms">Rooms</label>
+              <input type="number" id="rooms" name="rooms" min="1" value="1" required />
+            </div>
+
+            <div class="booking-field full">
+              <label for="type">Booking Type</label>
+              <select id="type" name="type">
+                <option value="stay">Stay Only</option>
+                <option value="package">Package (Stay + Tour)</option>
+                <option value="experience">Experience / Activity</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="booking-submit">
+            <button type="submit">Search &amp; Book</button>
+          </div>
+          <p class="booking-note">
+            By proceeding, you agree to the Tourism Department’s booking, cancellation &amp; refund policies.
+          </p>
+        </form>
+      </div>
+
+      <div class="hero-badge-floating">
+        <span>New</span> Integrated booking for stays, packages & experiences.
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <!-- QUICK HIGHLIGHTS -->
+  <section class="section">
+    <div class="highlights">
+      <div class="highlight-card">
+        <div class="highlight-title">Top Destinations</div>
+        <div class="highlight-tagline">From misty hills to serene river valleys</div>
+        <div class="highlight-meta">Explore handpicked routes, local attractions & best seasons.</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-title">Experiences & Activities</div>
+        <div class="highlight-tagline">Safaris, cultural tours, eco-trails & more</div>
+        <div class="highlight-meta">Book department-authorized experiences with trained guides.</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-title">Upcoming Events</div>
+        <div class="highlight-tagline">Festivals, fairs & cultural calendars</div>
+        <div class="highlight-meta">Plan your trip around flagship tourism festivals.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTINATIONS -->
+  <section class="section" id="destinations">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Featured Destinations</div>
+        <div class="section-subtitle">Discover iconic places curated by the Tourism Department.</div>
+      </div>
+      <a href="/destinations" class="section-link">View all destinations →</a>
+    </div>
+
+    <div class="card-grid">
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/destination1.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Hill Station Retreat</div>
+          <div class="card-meta">1200m • 3 hrs from Capital</div>
+          <p class="card-text">
+            Cool climate, tea gardens and panoramic viewpoints ideal for weekend getaways.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Best: Oct–Mar</span>
+            <a href="/destinations/hill-station" class="link-button">View details</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/destination2.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Wildlife Sanctuary</div>
+          <div class="card-meta">Core forest • Guided safaris</div>
+          <p class="card-text">
+            Rich biodiversity, birding trails and eco huts maintained by the department.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Eco-Tourism</span>
+            <a href="/destinations/wildlife-sanctuary" class="link-button">View details</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/destination3.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Riverfront Heritage Town</div>
+          <div class="card-meta">Historic ghats • Local markets</div>
+          <p class="card-text">
+            Experience traditional architecture, crafts, and local cuisine by the riverside.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Culture & Food</span>
+            <a href="/destinations/riverfront-town" class="link-button">View details</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="section" id="experiences">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Experiences & Activities</div>
+        <div class="section-subtitle">Book authentic, department-approved experiences.</div>
+      </div>
+      <a href="/experiences" class="section-link">Browse all experiences →</a>
+    </div>
+
+    <div class="card-grid">
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/experience1.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Forest Safari</div>
+          <div class="card-meta">Morning & evening slots</div>
+          <p class="card-text">
+            Guided jeep safaris with trained naturalists inside notified tourism zones.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Book Online</span>
+            <a href="/booking/experience?safari" class="link-button">Book safari</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/experience2.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Cultural Evening</div>
+          <div class="card-meta">Folk music & dance</div>
+          <p class="card-text">
+            Enjoy traditional performances, handicrafts stalls & local cuisine in one evening.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Daily (seasonal)</span>
+            <a href="/booking/experience?culture" class="link-button">Reserve seat</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-img" style="background-image:url('images/experience3.jpg');"></div>
+        <div class="card-body">
+          <div class="card-title">Village Eco-Stay</div>
+          <div class="card-meta">Community-run homestays</div>
+          <p class="card-text">
+            Stay with local families and experience rural life, cuisine and traditions.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Responsible Tourism</span>
+            <a href="/booking/experience?eco-stay" class="link-button">View options</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="section" id="events">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Events & Festivals</div>
+        <div class="section-subtitle">Align your trip with flagship tourism events.</div>
+      </div>
+      <a href="/events" class="section-link">Full calendar →</a>
+    </div>
+
+    <div class="card-grid">
+      <article class="card">
+        <div class="card-body">
+          <div class="card-title">[State] Tourism Festival</div>
+          <div class="card-meta">15–20 Jan • Capital City</div>
+          <p class="card-text">
+            Cultural shows, food courts, handicraft bazaars and evening concerts at the riverfront.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Flagship Event</span>
+            <a href="/events/tourism-festival" class="link-button">Know more</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <div class="card-title">Monsoon Trails</div>
+          <div class="card-meta">Jul–Sep • Multiple locations</div>
+          <p class="card-text">
+            Department-guided nature walks, waterfall tours and photography trails across forests.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Seasonal</span>
+            <a href="/events/monsoon-trails" class="link-button">Know more</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-body">
+          <div class="card-title">Riverfront Culture Nights</div>
+          <div class="card-meta">Every Sat • Riverfront Town</div>
+          <p class="card-text">
+            Evening aartis, local bands, light & sound shows along the ghats and promenades.
+          </p>
+          <div class="card-footer">
+            <span class="chip">Weekly</span>
+            <a href="/events/riverfront-nights" class="link-button">Know more</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- PLAN YOUR TRIP / CONTACT STRIP -->
+  <section class="section" id="planner">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Plan Your Trip</div>
+        <div class="section-subtitle">Need help? Our tourism offices and helplines are ready to assist you.</div>
+      </div>
+    </div>
+    <div class="highlights">
+      <div class="highlight-card">
+        <div class="highlight-title">Travel Info</div>
+        <div class="highlight-tagline">How to reach, best season & safety tips</div>
+        <div class="highlight-meta">Check road, rail and air connectivity from major cities.</div>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-title">Tourism Helpdesk</div>
+        <div class="highlight-tagline">24x7 helpline (toll-free)</div>
+        <div class="highlight-meta">Helpline: 1800-XXX-XXXX • Email: helpdesk@[state]tourism.gov.in</div>
+      </div>
+      <div class="highlight-card" id="contact">
+        <div class="highlight-title">Write to Us</div>
+        <div class="highlight-tagline">Share feedback or request custom itineraries</div>
+        <div class="highlight-meta">Use the enquiry form on the Contact page to reach our team.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      © <span id="year"></span> Department of Tourism, Government of [State]. All rights reserved.
+    </div>
+    <div class="footer-links">
+      <a href="/rti">RTI / Citizen Charter</a>
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms &amp; Conditions</a>
+      <a href="/refund-policy">Refund &amp; Cancellation</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+
+  navToggle.addEventListener('click', () => {
+    mainNav.classList.toggle('open');
+  });
+
+  // Close nav when clicking a link (on mobile)
+  mainNav.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mainNav.classList.remove('open');
+    });
+  });
+
+  // Dynamic year in footer
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Basic date validation for booking form
+  const bookingForm = document.getElementById('bookingForm');
+  const checkinInput = document.getElementById('checkin');
+  const checkoutInput = document.getElementById('checkout');
+
+  bookingForm.addEventListener('submit', function (e) {
+    const checkin = new Date(checkinInput.value);
+    const checkout = new Date(checkoutInput.value);
+
+    if (checkout <= checkin) {
+      e.preventDefault();
+      alert('Check-out date must be after check-in date.');
+      return false;
+    }
+  });
+</script>
+
+</body>
+</html>

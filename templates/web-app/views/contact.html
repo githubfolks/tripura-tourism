@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Contact Us - Tripura Tourism</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .contact-hero {
+            height: 350px;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/img/neermahal_tripura.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-align: center;
+        }
+
+        .contact-hero h1 {
+            font-size: 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        /* Info Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: -80px;
+            /* Overlap hero */
+            position: relative;
+            z-index: 10;
+        }
+
+        .info-card {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--bg-light);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 20px;
+        }
+
+        .info-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        .info-text {
+            color: #666;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .info-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Map & Form Section */
+        .contact-layout {
+            display: flex;
+            gap: 50px;
+            margin-top: 80px;
+        }
+
+        .contact-form-col {
+            flex: 1;
+        }
+
+        .contact-map-col {
+            flex: 1;
+            min-height: 400px;
+            background: #eee;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .btn-send {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-send:hover {
+            background: var(--primary-dark);
+        }
+
+        @media (max-width: 900px) {
+            .contact-layout {
+                flex-direction: column;
+            }
+
+            .contact-map-col {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="nav-container">
+            <div class="logo-block">
+                <a href="/"
+                    style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px;">
+                    <div class="logo-icon">TOURISM<br>LOGO</div>
+                    <div class="logo-text">
+                        <strong>TRIPURA TOURISM</strong>
+                        <span>Tripura Natural Trails & resort, Government of Tripura</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="nav-toggle" id="navToggle">
+                <span></span><span></span><span></span>
+            </div>
+
+            <nav id="mainNav">
+                <a href="/">Home</a>
+                <a href="/destinations">Destinations</a>
+                <a href="/experiences">Experiences</a>
+                <a href="/events">Events</a>
+                <a href="/planner">Plan Your Trip</a>
+                <a href="/contact" style="color: var(--accent); border-bottom: 2px solid var(--accent);">Contact</a>
+                <a href="/booking" class="nav-cta">Book Now</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="contact-hero">
+        <div>
+            <h1>Get in Touch</h1>
+            <p>We're here to help you plan your perfect trip.</p>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- Info Cards -->
+        <div class="info-grid">
+            <!-- Card 1 -->
+            <div class="info-card">
+                <div class="info-icon">📍</div>
+                <h3 class="info-title">Visit Us</h3>
+                <p class="info-text">
+                    <strong>Tripura Tourism Development Corp.</strong><br>
+                    Swetmahal, Palace Compound,<br>
+                    Agartala, Tripura - 799001
+                </p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="info-card">
+                <div class="info-icon">📞</div>
+                <h3 class="info-title">Call Us</h3>
+                <p class="info-text">
+                    Need assistance?<br>
+                    <a href="tel:03812325930" class="info-link">+91-381-232-5930</a><br>
+                    <span style="font-size: 13px; color: #888;">Mon-Sat: 10AM - 6PM</span>
+                </p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="info-card">
+                <div class="info-icon">✉️</div>
+                <h3 class="info-title">Email Us</h3>
+                <p class="info-text">
+                    For General Queries:<br>
+                    <a href="mailto:tripuratourism09@rediffmail.com"
+                        class="info-link">tripuratourism09@rediffmail.com</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Form & Map -->
+        <div class="contact-layout">
+
+            <div class="contact-form-col">
+                <h2 style="font-size: 28px; margin-bottom: 25px; color: #222;">Send us a specific query</h2>
+                <form action="#" onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+                    <div class="form-group">
+                        <label class="form-label">Your Name</label>
+                        <input type="text" class="form-input" placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" placeholder="john@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-input" placeholder="e.g. Booking inquiry">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-textarea" rows="5" placeholder="How can we help you?"></textarea>
+                    </div>
+                    <button type="submit" class="btn-send">SEND MESSAGE</button>
+                </form>
+            </div>
+
+            <div class="contact-map-col">
+                <!-- Using an iframe embed for Agartala -->
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d116834.00977784302!2d91.20054763116507!3d23.831457008678656!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3753f40dc5c66d29%3A0x6961445759711686!2sAgartala%2C%20Tripura!5e0!3m2!1sen!2sin!4v1703145000000!5m2!1sen!2sin"
+                    width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+
+        </div>
+
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <div>
+                © <span id="year"></span> Department of Tourism. All rights reserved.
+            </div>
+            <div class="footer-links">
+                <a href="#">RTI</a>
+                <a href="#">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/script.js"></script>
+</body>
+
+</html>
