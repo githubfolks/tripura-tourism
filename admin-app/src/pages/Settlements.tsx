@@ -1,4 +1,4 @@
-import { DollarSign, Download, Calendar } from 'lucide-react';
+import { Download, Calendar } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 // Mock settlement data

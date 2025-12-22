@@ -1,15 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Plus } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 
 export function CreatePackage() {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: '',
-        price: '',
-        duration: '',
-        type: 'Budget'
-    });
 
     return (
         <div className="max-w-full mx-auto space-y-6">

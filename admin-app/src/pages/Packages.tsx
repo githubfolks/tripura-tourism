@@ -1,4 +1,4 @@
-import { Package, Tag, Clock, IndianRupee, MoreVertical, Plus, Search, Filter } from 'lucide-react';
+import { Package, Tag, Clock, IndianRupee, MoreVertical, Plus, Search } from 'lucide-react';
 import { mockPackages } from '../lib/mockData';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +10,8 @@ export function Packages() {
 
     const filteredPackages = mockPackages.filter(pkg =>
         pkg.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        pkg.package_type.toLowerCase().includes(searchQuery.toLowerCase())
+        (pkg.description || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (pkg.package_type || '').toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (

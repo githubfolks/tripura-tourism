@@ -4,13 +4,6 @@ import { useState } from 'react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 
-const navigation = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Bookings', href: '/bookings', icon: CalendarCheck },
-    { name: 'Users', href: '/users', icon: Users },
-    { name: 'Destinations', href: '/destinations', icon: MapPin },
-    { name: 'Packages', href: '/packages', icon: Package },
-];
 
 const systemLinks = [
     { name: 'Roles', href: '/system/roles', icon: Shield },
