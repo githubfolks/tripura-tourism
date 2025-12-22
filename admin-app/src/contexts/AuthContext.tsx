@@ -14,15 +14,11 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
+    const [user, setUser] = useState<User | null>(() => {
         // Check local storage for persisted session (simulated)
         const storedUser = localStorage.getItem('tripura_admin_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
 
     const login = async (email: string, role: UserType) => {
         // Simulate API call
