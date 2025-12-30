@@ -187,7 +187,7 @@ nav a:hover::after {
 
 .hero {
   padding: 0;
-  background: #fff;
+  background: linear-gradient(to top, rgba(170, 219, 106, 0.9), transparent);
 }
 
 .hero-split {
@@ -231,7 +231,7 @@ nav a:hover::after {
 }
 
 .slide-overlay {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  background: linear-gradient(to top, rgba(170, 219, 106, 0.9), transparent);
   width: 100%;
   padding: 40px 30px;
   color: #fff;
