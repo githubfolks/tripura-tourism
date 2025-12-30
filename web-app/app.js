@@ -12,7 +12,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'homepage.html'));
 });
-
+app.get('/home', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'homepage.html'));
+});
 // Route for About Us page
 app.get('/about-us', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'about-us.html'));
