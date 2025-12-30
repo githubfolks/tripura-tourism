@@ -39,117 +39,79 @@
         </div>
     </header>
 
-    <section class="hero" id="home">
-        <div class="hero-inner">
-            <!-- LEFT SIDE TEXT -->
-            <div>
-                <div class="hero-tag">
-                    <div class="hero-tag-dot"></div>
-                    Official Tourism & Booking Portal
-                </div>
-                <h1>
-                    Discover <span class="state">TRIPURA</span><br>
-                    Forests, Culture & Heritage
-                </h1>
-                <p class="hero-subtitle">
-                    Plan your next holiday with verified government accommodations, curated tour packages,
-                    and authentic local experiences across [State Name].
-                </p>
-                <div class="hero-badges">
-                    <div class="hero-badge">Government Approved Stays</div>
-                    <div class="hero-badge">Secure Online Payments</div>
-                    <div class="hero-badge">Zero Convenience Fee*</div>
-                </div>
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <strong>40+</strong>
-                        Destinations
-                    </div>
-                    <div class="hero-stat">
-                        <strong>120+</strong>
-                        Govt. Accommodations
-                    </div>
-                    <div class="hero-stat">
-                        <strong>365</strong>
-                        Days of Experiences
-                    </div>
-                </div>
-                <p class="hero-footnote">
-                    *As per current departmental policy. Terms & conditions apply.
-                </p>
-            </div>
-
-            <!-- RIGHT SIDE BOOKING CARD -->
-            <div class="hero-visual">
-                <div class="booking-card" id="booking">
-                    <h3>Book Your Stay</h3>
-                    <small>Search govt. guest houses, lodges & tourism resorts</small>
-
-                    <form action="/booking/search" method="GET" id="bookingForm">
-                        <div class="booking-grid">
-                            <div class="booking-field full">
-                                <label for="destination">Destination</label>
-                                <select id="destination" name="destination" required>
-                                    <option value="">Select destination</option>
-                                    <option value="capital_city">Capital City</option>
-                                    <option value="hill_station">Hill Station</option>
-                                    <option value="wildlife_sanctuary">Wildlife Sanctuary</option>
-                                    <option value="river_front">River / Lake Side</option>
-                                </select>
-                            </div>
-
-                            <div class="booking-field">
-                                <label for="checkin">Check-in</label>
-                                <input type="date" id="checkin" name="checkin" required />
-                            </div>
-
-                            <div class="booking-field">
-                                <label for="checkout">Check-out</label>
-                                <input type="date" id="checkout" name="checkout" required />
-                            </div>
-
-                            <div class="booking-field">
-                                <label for="guests">Guests</label>
-                                <input type="number" id="guests" name="guests" min="1" value="2" required />
-                            </div>
-
-                            <div class="booking-field">
-                                <label for="rooms">Rooms</label>
-                                <input type="number" id="rooms" name="rooms" min="1" value="1" required />
-                            </div>
-
-                            <div class="booking-field full">
-                                <label for="type">Booking Type</label>
-                                <select id="type" name="type">
-                                    <option value="stay">Stay Only</option>
-                                    <option value="package">Package (Stay + Tour)</option>
-                                    <option value="experience">Experience / Activity</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="booking-submit">
-                            <button type="submit">Search &amp; Book</button>
-                        </div>
-                        <p class="booking-note">
-                            By proceeding, you agree to the Tourism Department’s booking, cancellation &amp; refund
-                            policies.
-                        </p>
-                    </form>
-                </div>
-
-                <div class="hero-badge-floating">
-                    <span>New</span> Integrated booking for stays, packages & experiences.
-                </div>
-            </div>
-        </div>
-    </section>
-
     <main>
+        <section class="hero" id="home" style="padding: 0;">
+            <div class="hero-split">
+                <!-- LEFT SLIDER: DESTINATIONS -->
+                <div class="hero-slider" id="slider-destinations">
+                    <div class="slide active" style="background-image: url('img/destination1.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Hill Station Retreats</h3>
+                                <p>Explore the misty hills and tea gardens.</p>
+                                <a href="/destinations" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide" style="background-image: url('img/destination2.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Wildlife Sanctuaries</h3>
+                                <p>Discover enriched biodiversity.</p>
+                                <a href="/destinations" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide" style="background-image: url('img/destination3.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Heritage Towns</h3>
+                                <p>Experience culture by the river.</p>
+                                <a href="/destinations" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SLIDER: EXPERIENCES -->
+                <div class="hero-slider" id="slider-experiences">
+                    <div class="slide active" style="background-image: url('img/experience1.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Forest Safaris</h3>
+                                <p>Guided tours into the wild.</p>
+                                <a href="/experiences" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide" style="background-image: url('img/experience2.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Cultural Evenings</h3>
+                                <p>Live folk music and dance.</p>
+                                <a href="/experiences" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide" style="background-image: url('img/experience3.jpg');">
+                        <div class="slide-overlay">
+                            <div class="slide-content">
+                                <h3>Eco Stays</h3>
+                                <p>Live with the local community.</p>
+                                <a href="/experiences" class="slide-btn">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <!-- About Us-->
         <section class="section">
             <div class="about-bar">
-                <div class="highlight-card">
+                <div class="about-col-img">
+                    <img src="img/dummy_person.png" alt="Representative">
+                </div>
+                <div class="highlight-card about-col-text">
                     <div class="highlight-title">About Us</div>
                     <div class="highlight-meta">
                         Tripura Nature Trails and Resorts Ltd. (TNTR) was established on 21st November, 2022, as a
@@ -185,25 +147,8 @@
                         while preserving its natural heritage.
                     </div>
                 </div>
-            </div>
-        </section>
-        <!-- QUICK HIGHLIGHTS -->
-        <section class="section">
-            <div class="highlights">
-                <div class="highlight-card">
-                    <div class="highlight-title">Top Destinations</div>
-                    <div class="highlight-tagline">From misty hills to serene river valleys</div>
-                    <div class="highlight-meta">Explore handpicked routes, local attractions & best seasons.</div>
-                </div>
-                <div class="highlight-card">
-                    <div class="highlight-title">Experiences & Activities</div>
-                    <div class="highlight-tagline">Safaris, cultural tours, eco-trails & more</div>
-                    <div class="highlight-meta">Book department-authorized experiences with trained guides.</div>
-                </div>
-                <div class="highlight-card">
-                    <div class="highlight-title">Upcoming Events</div>
-                    <div class="highlight-tagline">Festivals, fairs & cultural calendars</div>
-                    <div class="highlight-meta">Plan your trip around flagship tourism festivals.</div>
+                <div class="about-col-img">
+                    <img src="img/dummy_person.png" alt="Representative">
                 </div>
             </div>
         </section>
@@ -390,12 +335,12 @@
             </div>
             <div class="highlights">
                 <div class="highlight-card">
-                    <div class="highlight-title">Travel Info</div>
+                    <div class="highlight-title">Our Packages</div>
                     <div class="highlight-tagline">How to reach, best season & safety tips</div>
                     <div class="highlight-meta">Check road, rail and air connectivity from major cities.</div>
                 </div>
                 <div class="highlight-card">
-                    <div class="highlight-title">Tourism Helpdesk</div>
+                    <div class="highlight-title">Custom Packages</div>
                     <div class="highlight-tagline">24x7 helpline (toll-free)</div>
                     <div class="highlight-meta">Helpline: 1800-XXX-XXXX • Email: helpdesk@[state]tourism.gov.in</div>
                 </div>

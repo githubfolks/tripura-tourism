@@ -1,10 +1,12 @@
 :root {
-  --primary: #00695c;
-  --primary-dark: #004d40;
+  --primary: #8dc444;
+  --primary-dark: #558b2f;
   --accent: #ffb300;
   --bg-light: #f1f8e9;
   --text-main: #263238;
   --text-muted: #607d8b;
+  --btn-primary: #0288d1;
+  --btn-primary-hover: #01579b;
   --card-bg: #ffffff;
   --shadow-soft: 0 8px 18px rgba(0, 0, 0, 0.08);
   --radius-lg: 16px;
@@ -40,14 +42,14 @@ header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(0, 77, 64, 0.96);
+  background: rgba(85, 139, 47, 0.96);
   color: #fff;
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .nav-container {
-  max-width: 1180px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 10px 16px;
   display: flex;
@@ -124,15 +126,15 @@ nav a:hover::after {
 
 .nav-cta {
   padding: 6px 14px;
-  background: var(--accent);
-  color: #3e2723;
+  background: var(--btn-primary);
+  color: #fff;
   border-radius: 20px;
   font-weight: 600;
   font-size: 13px;
 }
 
 .nav-cta:hover {
-  background: #ffa000;
+  background: var(--btn-primary-hover);
 }
 
 .nav-toggle {
@@ -181,95 +183,102 @@ nav a:hover::after {
 
 /* HERO / BOOKING */
 
+/* HERO / SLIDERS */
+
 .hero {
-  background: radial-gradient(circle at top left, #80cbc4 0, #004d40 40%, #001a17 100%);
-  color: #e0f2f1;
-  padding: 32px 16px 40px;
+  padding: 0;
+  background: #fff;
 }
 
-.hero-inner {
-  max-width: 1180px;
-  margin: 0 auto;
+.hero-split {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
-  gap: 28px;
-  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  height: 520px;
+  width: 100%;
+  gap: 24px;
+  padding: 24px 16px;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
-.hero-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0, 0, 0, 0.35);
-  padding: 4px 10px;
-  border-radius: 50px;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
+.hero-slider {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+  border: 4px solid rgba(255, 255, 255, 0.1);
 }
 
-.hero-tag-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #ffeb3b;
-}
-
-.hero h1 {
-  font-size: clamp(26px, 4vw, 34px);
-  margin-bottom: 10px;
-}
-
-.hero h1 span.state {
-  color: #ffecb3;
-}
-
-.hero-subtitle {
-  font-size: 14px;
-  max-width: 540px;
-  margin-bottom: 14px;
-  color: #cfd8dc;
-}
-
-.hero-badges {
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 18px;
-  font-size: 11px;
+  align-items: flex-end;
 }
 
-.hero-badge {
-  padding: 5px 10px;
-  border-radius: 50px;
-  border: 1px solid rgba(224, 242, 241, 0.4);
-  background: rgba(0, 0, 0, 0.2);
+.slide.active {
+  opacity: 1;
+  z-index: 1;
 }
 
-.hero-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  font-size: 11px;
-  color: #cfd8dc;
-  margin-bottom: 4px;
-}
-
-.hero-stat strong {
-  display: block;
-  font-size: 16px;
+.slide-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+  width: 100%;
+  padding: 40px 30px;
   color: #fff;
 }
 
-.hero-footnote {
-  font-size: 11px;
-  color: #b0bec5;
+.slide-content h3 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
-.hero-visual {
-  position: relative;
+.slide-content p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #eceff1;
+  max-width: 400px;
 }
+
+.slide-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--btn-primary);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: background 0.2s;
+}
+
+.slide-btn:hover {
+  background: var(--btn-primary-hover);
+}
+
+@media (max-width: 768px) {
+  .hero-split {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .hero-slider {
+    height: 350px;
+  }
+}
+
 
 .booking-card {
   background: #ffffff;
@@ -341,7 +350,7 @@ nav a:hover::after {
   padding: 9px 10px;
   border-radius: 999px;
   border: none;
-  background: var(--primary);
+  background: var(--btn-primary);
   color: #fff;
   font-weight: 600;
   font-size: 13px;
@@ -380,7 +389,7 @@ nav a:hover::after {
 /* MAIN SECTIONS */
 
 main {
-  max-width: 1180px;
+  max-width: 1440px;
   margin: 18px auto 0;
   padding: 0 16px 40px;
 }
@@ -548,7 +557,7 @@ main {
 /* FOOTER */
 
 footer {
-  background: #102621;
+  background: #1b2e0e;
   color: #90a4ae;
   padding: 18px 16px 22px;
   font-size: 11px;
@@ -556,7 +565,7 @@ footer {
 }
 
 .footer-inner {
-  max-width: 1180px;
+  max-width: 1440px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -622,12 +631,48 @@ footer {
   padding: 20px;
   border-radius: 4px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  position: relative;
-  margin-left: 0px;
   margin-right: 0px;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.about-col-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.about-col-img img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.about-col-text {
+  /* Removed flex properties from previous .highlight-card override if needed, 
+     but .highlight-card styles should be fine. 
+     Just ensuring it takes full width of its grid cell. */
+  width: 100%;
+  height: 100%;
+  box-shadow: none;
+  /* Make text card blend or keep shadow? */
+}
+
+@media (max-width: 960px) {
+  .about-bar {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .about-col-img {
+    max-width: 300px;
+    margin: 0 auto;
+  }
 }
 
 .filter-group {
@@ -663,8 +708,8 @@ footer {
 
 .filter-btn {
   padding: 12px 24px;
-  background: var(--accent);
-  color: #3e2723;
+  background: var(--btn-primary);
+  color: #fff;
   border: none;
   font-weight: 600;
   cursor: pointer;
@@ -757,7 +802,7 @@ main.destinations-main {
 }
 
 .content-container {
-  max-width: 1180px;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 16px 60px;
 }

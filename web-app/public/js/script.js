@@ -38,3 +38,32 @@ if (bookingForm && checkinInput && checkoutInput) {
     }
   });
 }
+
+// Slider Logic
+function initSlider(sliderId, interval = 3000) {
+  const slider = document.getElementById(sliderId);
+  if (!slider) return;
+
+  const slides = slider.querySelectorAll('.slide');
+  if (slides.length === 0) return;
+
+  let currentIndex = 0;
+
+  // Ensure the first slide is active initially
+  slides.forEach((slide, index) => {
+    if (index === 0) slide.classList.add('active');
+    else slide.classList.remove('active');
+  });
+
+  setInterval(() => {
+    slides[currentIndex].classList.remove('active');
+    currentIndex = (currentIndex + 1) % slides.length;
+    slides[currentIndex].classList.add('active');
+  }, interval);
+}
+
+// Initialize sliders with slightly different intervals to look more organic
+document.addEventListener('DOMContentLoaded', () => {
+  initSlider('slider-destinations', 4000); // 4 seconds
+  initSlider('slider-experiences', 5000);  // 5 seconds
+});
