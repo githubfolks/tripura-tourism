@@ -1,4 +1,4 @@
-export type UserType = 'PORTAL_ADMIN' | 'PORTAL_STAFF' | 'PARTNER_ADMIN' | 'PARTNER_USER';
+export type UserType = 'PORTAL_ADMIN' | 'PORTAL_STAFF' | 'ASSET_MANAGER';
 
 export interface User {
     id: string;
@@ -6,7 +6,10 @@ export interface User {
     email: string;
     phone?: string;
     user_type: UserType;
-    partner_id?: string | null; // For partner users
+    partner_id?: string | null;
+    assigned_destinations?: string[]; // IDs of assigned destinations
+    assigned_experiences?: string[]; // IDs of assigned experiences
+    assigned_packages?: string[];    // IDs of assigned packages
     is_active: boolean;
     is_verified: boolean;
     created_at: string;

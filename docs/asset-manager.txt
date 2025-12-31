@@ -1,0 +1,28 @@
+================ASSET MANAGER==============
+
+1. A destination will have following attributes:
+    1. Name
+    2. Description
+    3. Cover Image
+    4. Other Images (will be used as gallery)
+2. A destination can have multiple accommodations.
+    1. Delux Room
+    2. Camping Tent
+    3. Premium Rooms
+3. System will have a separate role as Asset Manager.
+    1. While onboarding an asset manager, he will be assigned with destination, experience and/or package.
+    2. The asset manager manage the bookings.
+    3. Booking will have following status:
+        1. Pending
+        2. Confirmed
+        3. Completed
+        4. Cancelled
+4. Booking attributes:
+    1. selection of features (accommodation, experience, package)
+    2. check-in date
+    3. check-out date
+    4. Room type selection
+    5. number of guests
+    6. visitor details
+    7. payment details (payment method, payment status, payment amount)
+5. A master calendar will be created for each destination. API for asset will have availability of rooms on a given date as per the calendar.

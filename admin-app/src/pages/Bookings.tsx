@@ -1,4 +1,4 @@
-import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle } from 'lucide-react';
+import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle, Plus } from 'lucide-react';
 import { mockBookings } from '../lib/mockData';
 import { cn } from '../lib/utils';
 import { useState } from 'react';
@@ -27,6 +27,15 @@ export function Bookings() {
                     <h1 className="text-2xl font-bold text-slate-800">Bookings</h1>
                     <p className="text-slate-500 mt-1">{isPartner ? 'Manage your portal bookings.' : 'Track and manage all bookings.'}</p>
                 </div>
+                {!isPartner && (
+                    <button
+                        onClick={() => navigate('/bookings/new')}
+                        className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition-all"
+                    >
+                        <Plus className="h-4 w-4 mr-2" />
+                        New Booking
+                    </button>
+                )}
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">

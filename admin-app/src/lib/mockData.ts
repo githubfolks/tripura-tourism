@@ -21,6 +21,16 @@ export const mockUsers: User[] = [
         created_at: "2024-02-15T10:00:00Z",
         updated_at: "2024-02-15T10:00:00Z",
     },
+    {
+        id: "u3",
+        full_name: "Asset Manager",
+        email: "manager@tripura.gov.in",
+        user_type: "ASSET_MANAGER",
+        is_active: true,
+        is_verified: true,
+        created_at: "2024-03-01T10:00:00Z",
+        updated_at: "2024-03-01T10:00:00Z",
+    },
 ];
 
 export const mockDestinations: Destination[] = [
@@ -49,6 +59,19 @@ export const mockDestinations: Destination[] = [
         created_at: "2024-01-12T10:00:00Z",
         updated_at: "2024-01-12T10:00:00Z",
     }
+];
+
+export const mockAccommodations = [
+    { id: 'acc1', name: 'Deluxe Room', type: 'Room', base_price: 3500, max_occupancy: 2 },
+    { id: 'acc2', name: 'Royal Suite', type: 'Room', base_price: 8500, max_occupancy: 2 },
+    { id: 'acc3', name: 'Camping Tent', type: 'Tent', base_price: 1500, max_occupancy: 2 },
+    { id: 'acc4', name: 'Family Cottage', type: 'Cottage', base_price: 5500, max_occupancy: 4 },
+];
+
+export const mockExperiences = [
+    { id: 'exp1', name: 'Guided Jungle Trek', price_inr: 1200, duration: '4 hours' },
+    { id: 'exp2', name: 'Sunset Boat Ride', price_inr: 800, duration: '2 hours' },
+    { id: 'exp3', name: 'Cultural Dance Show', price_inr: 500, duration: '1.5 hours' },
 ];
 
 export const mockPackages: Package[] = [
@@ -134,7 +157,7 @@ export const mockBookings: Booking[] = [
 export const mockRoles: Role[] = [
     { id: 'r1', name: 'Super Admin', description: 'Full access to all resources.' },
     { id: 'r2', name: 'Content Manager', description: 'Manage destinations and packages.' },
-    { id: 'r3', name: 'Partner', description: 'Access API and limited booking view.' },
+    { id: 'r3', name: 'Asset Manager', description: 'Manage assigned destinations, experiences, and packages.' },
 ];
 
 export const mockPermissions: Permission[] = [

@@ -4,11 +4,12 @@ import { mockUsers } from '../lib/mockData';
 
 interface AuthContextType {
     user: User | null;
-    login: (email: string, role: UserType) => Promise<void>;
+    login: (email: string) => Promise<void>;
     logout: () => void;
     isAuthenticated: boolean;
     isPartner: boolean;
     isAdmin: boolean;
+    isAssetManager: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,21 +21,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const login = async (email: string, role: UserType) => {
+    const login = async (email: string) => {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Find mock user or create a temporary one for the session
-        let validUser = mockUsers.find(u => u.email === email && u.user_type === role);
+        // Find mock user
+        let validUser = mockUsers.find(u => u.email === email);
 
         if (!validUser) {
+            // Infer role from email for demo purposes
+            let role: UserType = 'PORTAL_ADMIN';
+            if (email.includes('staff')) role = 'PORTAL_STAFF';
+            else if (email.includes('manager')) role = 'ASSET_MANAGER';
+
             // Fallback for demo purposes if specific mock user not found
+            const fallbackUserMap: Record<string, Partial<User>> = {
+                'PORTAL_ADMIN': { id: 'admin_u1', full_name: 'Admin User' },
+                'PORTAL_STAFF': { id: 'staff_u1', full_name: 'Staff Member' },
+                'ASSET_MANAGER': { id: 'manager_u1', full_name: 'Asset Manager' }
+            };
+
+            const fallback = fallbackUserMap[role] || fallbackUserMap['PORTAL_ADMIN'];
+
             validUser = {
-                id: role === 'PARTNER_ADMIN' ? 'par_u1' : 'admin_u1',
-                full_name: role === 'PARTNER_ADMIN' ? 'Partner User' : 'Admin User',
+                id: fallback.id!,
+                full_name: fallback.full_name!,
                 email: email,
                 user_type: role,
-                partner_id: role === 'PARTNER_ADMIN' ? 'par1' : undefined, // Link to MakeMyTrip mock partner
+                partner_id: undefined,
                 is_active: true,
                 is_verified: true,
                 created_at: new Date().toISOString(),
@@ -57,8 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             login,
             logout,
             isAuthenticated: !!user,
-            isPartner: user?.user_type === 'PARTNER_ADMIN' || user?.user_type === 'PARTNER_USER',
-            isAdmin: user?.user_type === 'PORTAL_ADMIN' || user?.user_type === 'PORTAL_STAFF'
+            isPartner: false, // Deprecated, always false
+            isAdmin: user?.user_type === 'PORTAL_ADMIN' || user?.user_type === 'PORTAL_STAFF',
+            isAssetManager: user?.user_type === 'ASSET_MANAGER'
         }}>
             {children}
         </AuthContext.Provider>

@@ -22,7 +22,7 @@ const partnerLinks = [
 export function Sidebar() {
     const [isPartnersOpen, setIsPartnersOpen] = useState(true);
     const [isSystemOpen, setIsSystemOpen] = useState(true);
-    const { isAdmin, isPartner, logout } = useAuth();
+    const { isAdmin, isPartner, isAssetManager, logout } = useAuth();
 
     return (
         <div className="flex flex-col w-64 bg-slate-900 text-white min-h-screen border-r border-slate-800">
@@ -63,7 +63,7 @@ export function Sidebar() {
                     Bookings
                 </NavLink>
 
-                {isPartner && (
+                {(isPartner || isAssetManager) && (
                     <NavLink
                         to="/settlements"
                         className={({ isActive }) =>

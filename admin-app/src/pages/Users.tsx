@@ -54,9 +54,8 @@ export function Users() {
                     </div>
                 </div>
 
-                {/* Filters Tabs */}
                 <div className="flex px-4 border-b border-slate-200 overflow-x-auto">
-                    {['ALL', 'PORTAL_ADMIN', 'PORTAL_STAFF', 'PARTNER_ADMIN'].map((type) => (
+                    {['ALL', 'PORTAL_ADMIN', 'PORTAL_STAFF', 'ASSET_MANAGER'].map((type) => (
                         <button
                             key={type}
                             onClick={() => setFilterType(type)}

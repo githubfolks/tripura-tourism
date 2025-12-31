@@ -27,6 +27,7 @@ import { BookingDetails } from './pages/BookingDetails';
 import { CreateDestination } from './pages/CreateDestination';
 import { CreatePackage } from './pages/CreatePackage';
 import { CreateUser } from './pages/CreateUser';
+import { CreateBooking } from './pages/CreateBooking';
 
 // Placeholder components for routes we haven't built yet
 const Placeholder = ({ title }: { title: string }) => (
@@ -61,6 +62,7 @@ function App() {
             <Route path="/" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="bookings" element={<Bookings />} />
+              <Route path="bookings/new" element={<CreateBooking />} />
               <Route path="bookings/:id" element={<BookingDetails />} />
               <Route path="settlements" element={<Settlements />} />
 

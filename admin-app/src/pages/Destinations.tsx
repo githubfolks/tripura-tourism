@@ -1,4 +1,4 @@
-import { Search, Plus, MapPin, Edit2, Trash2 } from 'lucide-react';
+import { Search, Plus, MapPin, Edit2, Trash2, Star } from 'lucide-react';
 import { mockDestinations } from '../lib/mockData';
 import { cn } from '../lib/utils';
 import { useState } from 'react';
@@ -6,7 +6,29 @@ import { useNavigate } from 'react-router-dom';
 
 export function Destinations() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
+    const [searchTerm, setSearchTerm] = useState('');
+    // Local state for immediate UI feedback, syncing with mockData
+    const [destinations, setDestinations] = useState(mockDestinations);
     const navigate = useNavigate();
+
+    const toggleFeatured = (id: string, currentStatus: boolean | undefined) => {
+        // Update local state
+        const updatedDestinations = destinations.map(dest =>
+            dest.id === id ? { ...dest, is_featured: !currentStatus } : dest
+        );
+        setDestinations(updatedDestinations);
+
+        // Update mock data reference (for persistence across navigation in this session)
+        const mockIndex = mockDestinations.findIndex(d => d.id === id);
+        if (mockIndex !== -1) {
+            mockDestinations[mockIndex].is_featured = !currentStatus;
+        }
+    };
+
+    const filteredDestinations = destinations.filter(dest =>
+        dest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (dest.district || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="space-y-6">
@@ -51,10 +73,12 @@ export function Destinations() {
                             type="text"
                             placeholder="Search destinations by name or district..."
                             className="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-50"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                     <div className="flex items-center text-sm text-slate-500">
-                        <span className="font-semibold text-slate-700 mr-1">{mockDestinations.length}</span> destinations found
+                        <span className="font-semibold text-slate-700 mr-1">{filteredDestinations.length}</span> destinations found
                     </div>
                 </div>
 
@@ -68,11 +92,12 @@ export function Destinations() {
                                     <th className="px-6 py-3">District</th>
                                     <th className="px-6 py-3">Best Time</th>
                                     <th className="px-6 py-3">Status</th>
+                                    <th className="px-6 py-3 text-center">Featured</th>
                                     <th className="px-6 py-3 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {mockDestinations.map((dest) => (
+                                {filteredDestinations.map((dest) => (
                                     <tr key={dest.id} className="bg-white border-b hover:bg-slate-50 transition-colors">
                                         <td className="px-6 py-4">
                                             <div className="h-10 w-16 bg-slate-200 rounded overflow-hidden">
@@ -93,6 +118,20 @@ export function Destinations() {
                                                 {dest.is_active ? 'Active' : 'Inactive'}
                                             </span>
                                         </td>
+                                        <td className="px-6 py-4 text-center">
+                                            <button
+                                                onClick={() => toggleFeatured(dest.id, dest.is_featured)}
+                                                className={cn(
+                                                    "p-1.5 rounded-full transition-colors",
+                                                    dest.is_featured
+                                                        ? "text-yellow-500 hover:text-yellow-600 bg-yellow-50 hover:bg-yellow-100"
+                                                        : "text-slate-300 hover:text-slate-400 hover:bg-slate-100"
+                                                )}
+                                                title={dest.is_featured ? "Remove from Featured" : "Mark as Featured"}
+                                            >
+                                                <Star className={cn("h-5 w-5", dest.is_featured && "fill-current")} />
+                                            </button>
+                                        </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end space-x-2">
                                                 <button className="text-slate-400 hover:text-blue-600"><Edit2 className="h-4 w-4" /></button>
@@ -108,16 +147,28 @@ export function Destinations() {
 
                 {viewMode === 'grid' && (
                     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {mockDestinations.map((dest) => (
-                            <div key={dest.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
+                        {filteredDestinations.map((dest) => (
+                            <div key={dest.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group relative">
                                 <div className="h-40 bg-slate-200 relative">
                                     {dest.images?.[0] ?
                                         <img src={dest.images[0]} alt={dest.name} className="h-full w-full object-cover" /> :
                                         <div className="h-full w-full flex items-center justify-center text-slate-400"><MapPin className="h-8 w-8" /></div>
                                     }
-                                    <div className="absolute top-2 right-2">
+                                    <div className="absolute top-2 right-2 flex gap-1">
+                                        <button
+                                            onClick={(e) => { e.preventDefault(); toggleFeatured(dest.id, dest.is_featured); }}
+                                            className={cn(
+                                                "p-1.5 rounded-full shadow-sm backdrop-blur-sm transition-colors",
+                                                dest.is_featured
+                                                    ? "bg-yellow-400 text-white"
+                                                    : "bg-white/80 text-slate-400 hover:text-yellow-500"
+                                            )}
+                                            title="Toggle Featured"
+                                        >
+                                            <Star className={cn("h-3.5 w-3.5", dest.is_featured && "fill-current")} />
+                                        </button>
                                         <span className={cn(
-                                            "px-2 py-1 rounded-md text-xs font-bold shadow-sm",
+                                            "px-2 py-1 rounded-md text-xs font-bold shadow-sm flex items-center",
                                             dest.is_active ? "bg-green-500 text-white" : "bg-red-500 text-white"
                                         )}>
                                             {dest.is_active ? 'Active' : 'Inactive'}
