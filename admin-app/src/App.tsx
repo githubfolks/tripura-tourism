@@ -7,7 +7,7 @@ import { Users } from './pages/Users';
 import { Destinations } from './pages/Destinations';
 import { Packages } from './pages/Packages';
 import { Bookings } from './pages/Bookings';
-import { Settlements } from './pages/Settlements'; // New page
+import { Transactions } from './pages/Transactions'; // New page
 
 // System Pages
 import { Roles } from './pages/system/Roles';
@@ -63,8 +63,9 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="bookings" element={<Bookings />} />
               <Route path="bookings/new" element={<CreateBooking />} />
+              <Route path="bookings/:id/edit" element={<CreateBooking />} />
               <Route path="bookings/:id" element={<BookingDetails />} />
-              <Route path="settlements" element={<Settlements />} />
+              <Route path="transactions" element={<Transactions />} />
 
               {/* Admin Only Routes */}
               <Route element={<AdminRoute />}>

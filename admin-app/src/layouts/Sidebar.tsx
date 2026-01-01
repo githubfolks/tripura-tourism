@@ -65,7 +65,7 @@ export function Sidebar() {
 
                 {(isPartner || isAssetManager) && (
                     <NavLink
-                        to="/settlements"
+                        to="/transactions"
                         className={({ isActive }) =>
                             cn(
                                 'flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors',
@@ -76,7 +76,7 @@ export function Sidebar() {
                         }
                     >
                         <DollarSign className="h-5 w-5 mr-3" />
-                        Settlements
+                        Transactions
                     </NavLink>
                 )}
 

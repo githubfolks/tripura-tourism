@@ -26,3 +26,8 @@
     6. visitor details
     7. payment details (payment method, payment status, payment amount)
 5. A master calendar will be created for each destination. API for asset will have availability of rooms on a given date as per the calendar.
+6. In booking details page, user should be able to download the invoice only when visitor has checkedout.
+7. User should select anyone of Aadhar, Driving License, Voter Card, or other Photo ID.
+
+# Transactions page:
+Here we need to show the list of bookings of the assets associated with the asset manager. There should be a button to view details of the booking.

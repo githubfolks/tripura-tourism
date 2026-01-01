@@ -51,12 +51,15 @@ export interface Package {
 
 export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'ON_HOLD';
 
+export type PaymentStatus = 'PENDING' | 'PAID' | 'PARTIAL' | 'FAILED' | 'REFUNDED';
+
 export interface Booking {
     id: string;
     booking_reference: string;
     source: string;
     partner_id?: string | null;
     package_id?: string;
+    experience_id?: string;
     package_name?: string; // Derived for UI
     booking_status: BookingStatus;
     travel_start_date: string;
@@ -64,11 +67,15 @@ export interface Booking {
     pax_adults: number;
     pax_children: number;
     total_amount: number;
+    amount_paid?: number;
+    payment_status?: PaymentStatus;
     currency: string;
     booked_at: string;
     customer_name: string; // From booking_customers
     customer_email?: string;
     customer_phone?: string;
+    customer_id_type?: string;
+    customer_id_proof_url?: string;
 }
 
 export interface Partner {

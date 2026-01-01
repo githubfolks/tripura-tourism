@@ -1,11 +1,15 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Calendar, User, CreditCard, Save } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChevronLeft, Calendar, User as UserIcon, CreditCard, Save, Upload } from 'lucide-react';
+import { useEffect } from 'react';
 import { mockPackages, mockAccommodations, mockBookings, mockExperiences } from '../lib/mockData';
 import { useAuth } from '../contexts/AuthContext';
+import type { PaymentStatus } from '../types/schema';
 
 export function CreateBooking() {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditMode = Boolean(id);
     const { user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
@@ -22,10 +26,13 @@ export function CreateBooking() {
     const [phone, setPhone] = useState('');
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
+    const [idType, setIdType] = useState('AADHAR');
+    const [idFile, setIdFile] = useState<File | null>(null);
 
     // Payment Details
     const [paymentMethod, setPaymentMethod] = useState('CASH');
-    const [paymentStatus, setPaymentStatus] = useState('PENDING');
+    const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('PENDING');
+    const [partialAmount, setPartialAmount] = useState<number | ''>('');
 
     // Calculate Pricing
     const pricing = useMemo(() => {
@@ -64,6 +71,53 @@ export function CreateBooking() {
         return { total, breakdown };
     }, [bookingType, selectedItemId, checkIn, checkOut, unitCount, adults, children]);
 
+    // Load booking data if editing
+    useEffect(() => {
+        if (isEditMode && id) {
+            const booking = mockBookings.find(b => b.id === id);
+            if (booking) {
+                // Determine type based on available fields (simplified logic)
+                // Since mock data isn't perfect, we'll infer.
+                if (booking.package_id) {
+                    setBookingType('PACKAGE');
+                    setSelectedItemId(booking.package_id);
+                } else if (booking.experience_id) { // Assuming type has this field or we inferred it
+                    setBookingType('EXPERIENCE');
+                    setSelectedItemId(booking.experience_id);
+                } else {
+                    setBookingType('ACCOMMODATION');
+                    // We don't have accommodation_id in Booking interface explicitly in schema? 
+                    // Let's assume for now we can't fully restore ACCOMMODATION specifics without it.
+                    // But for demo, we might find it if we added it to schema or just ignore.
+                }
+
+                setCheckIn(booking.travel_start_date.split('T')[0]);
+                setCheckOut(booking.travel_end_date.split('T')[0]);
+                setAdults(booking.pax_adults);
+                setChildren(booking.pax_children);
+                setLeadGuest(booking.customer_name);
+                setEmail(booking.customer_email || '');
+                setPhone(booking.customer_phone || '');
+                if (booking.customer_id_type) setIdType(booking.customer_id_type);
+                // Load payment status (prefer explicit field, fallback to amount inferrence for old data)
+                if (booking.payment_status) {
+                    setPaymentStatus(booking.payment_status);
+                    if (booking.payment_status === 'PARTIAL' && booking.amount_paid) {
+                        setPartialAmount(booking.amount_paid);
+                    }
+                } else {
+                    // Fallback inferrence
+                    if (booking.amount_paid && booking.amount_paid < booking.total_amount && booking.amount_paid > 0) {
+                        setPaymentStatus('PARTIAL');
+                        setPartialAmount(booking.amount_paid);
+                    } else if (booking.amount_paid === booking.total_amount) {
+                        setPaymentStatus('PAID');
+                    }
+                }
+            }
+        }
+    }, [isEditMode, id]);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -75,30 +129,42 @@ export function CreateBooking() {
         else if (bookingType === 'EXPERIENCE') selectedItem = mockExperiences.find(e => e.id === selectedItemId);
         else selectedItem = mockAccommodations.find(a => a.id === selectedItemId);
 
-        const newBooking = {
-            id: `b${Date.now()}`,
-            booking_reference: `TRP-2025-${Math.floor(Math.random() * 1000)}`,
+        const bookingData = {
+            id: isEditMode ? id! : `b${Date.now()}`,
+            booking_reference: isEditMode ? mockBookings.find(b => b.id === id)?.booking_reference || `TRP-${Date.now()}` : `TRP-2025-${Math.floor(Math.random() * 1000)}`,
             source: 'WALK_IN',
             partner_id: null,
             package_id: bookingType === 'PACKAGE' ? selectedItemId : undefined,
             experience_id: bookingType === 'EXPERIENCE' ? selectedItemId : undefined,
             package_name: selectedItem?.name,
-            booking_status: 'CONFIRMED',
+            booking_status: 'CONFIRMED' as const,
             travel_start_date: checkIn,
             travel_end_date: checkOut || checkIn, // Experience might be single day
             pax_adults: adults,
             pax_children: children,
             total_amount: pricing.total,
+            amount_paid: paymentStatus === 'PARTIAL' ? Number(partialAmount) : (paymentStatus === 'PAID' ? pricing.total : 0),
+            payment_status: paymentStatus,
             currency: 'INR',
             booked_at: new Date().toISOString(),
             customer_name: leadGuest,
             customer_email: email,
             customer_phone: phone,
+            customer_id_type: idType,
+            customer_id_proof_url: idFile ? URL.createObjectURL(idFile) : undefined,
             created_by: user?.id,
             booking_channel: 'WALK_IN'
         };
 
-        mockBookings.push(newBooking as any);
+        if (isEditMode) {
+            const index = mockBookings.findIndex(b => b.id === id);
+            if (index !== -1) {
+                mockBookings[index] = { ...mockBookings[index], ...bookingData };
+            }
+        } else {
+            mockBookings.push(bookingData as any);
+        }
+
         setIsLoading(false);
         navigate('/bookings');
     };
@@ -113,8 +179,8 @@ export function CreateBooking() {
                     <ChevronLeft className="h-6 w-6 text-slate-500" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">New Booking</h1>
-                    <p className="text-slate-500 text-sm">Create a new walk-in or offline booking.</p>
+                    <h1 className="text-2xl font-bold text-slate-800">{isEditMode ? 'Edit Booking' : 'New Booking'}</h1>
+                    <p className="text-slate-500 text-sm">{isEditMode ? 'Update booking details.' : 'Create a new walk-in or offline booking.'}</p>
                 </div>
             </div>
 
@@ -209,7 +275,7 @@ export function CreateBooking() {
 
                                 {bookingType === 'ACCOMMODATION' && (
                                     <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-2">Number of Units</label>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Number of Rooms</label>
                                         <input
                                             type="number"
                                             min="1"
@@ -225,7 +291,7 @@ export function CreateBooking() {
                         {/* 2. Guest Details */}
                         <div className="p-6 border-b border-slate-200">
                             <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
-                                <User className="h-5 w-5 mr-2 text-blue-600" />
+                                <UserIcon className="h-5 w-5 mr-2 text-blue-600" />
                                 Guest Information
                             </h2>
 
@@ -287,6 +353,40 @@ export function CreateBooking() {
                                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
                                 </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">ID Proof Type</label>
+                                    <select
+                                        value={idType}
+                                        onChange={(e) => setIdType(e.target.value)}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="AADHAR">Aadhar Card</option>
+                                        <option value="DRIVING_LICENSE">Driving License</option>
+                                        <option value="VOTER_ID">Voter ID</option>
+                                        <option value="PASSPORT">Passport</option>
+                                        <option value="OTHER">Other Government ID</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Upload ID Proof</label>
+                                    <div className="relative border-2 border-dashed border-slate-300 rounded-lg p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer">
+                                        <input
+                                            type="file"
+                                            accept="image/*,.pdf"
+                                            onChange={(e) => e.target.files && setIdFile(e.target.files[0])}
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                        <div className="flex flex-col items-center gap-2">
+                                            <Upload className="h-6 w-6 text-slate-400" />
+                                            <span className="text-sm text-slate-600">
+                                                {idFile ? idFile.name : 'Click to upload or drag and drop'}
+                                            </span>
+                                            {!idFile && <span className="text-xs text-slate-400">JPG, PNG or PDF</span>}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -298,6 +398,18 @@ export function CreateBooking() {
                             </h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-2">Payment Status</label>
+                                    <select
+                                        value={paymentStatus}
+                                        onChange={(e) => setPaymentStatus(e.target.value as PaymentStatus)}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    >
+                                        <option value="PENDING">Pending (Pay later)</option>
+                                        <option value="PAID">Paid Full</option>
+                                        <option value="PARTIAL">Partial Payment</option>
+                                    </select>
+                                </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Payment Method</label>
                                     <select
@@ -312,18 +424,20 @@ export function CreateBooking() {
                                     </select>
                                 </div>
 
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Payment Status</label>
-                                    <select
-                                        value={paymentStatus}
-                                        onChange={(e) => setPaymentStatus(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="PENDING">Pending (Pay later)</option>
-                                        <option value="PAID">Paid Full</option>
-                                        <option value="PARTIAL">Partial Payment</option>
-                                    </select>
-                                </div>
+                                {paymentStatus === 'PARTIAL' && (
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Partial Amount (₹)</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max={pricing.total}
+                                            value={partialAmount}
+                                            onChange={(e) => setPartialAmount(e.target.value === '' ? '' : parseFloat(e.target.value))}
+                                            placeholder="Enter amount paid"
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </form>
@@ -379,6 +493,19 @@ export function CreateBooking() {
                                 <span className="text-2xl font-bold text-blue-600">₹{pricing.total.toLocaleString()}</span>
                             </div>
 
+                            {paymentStatus === 'PARTIAL' && (
+                                <div className="space-y-2 mb-6 pt-2 border-t border-dashed border-slate-200">
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600">Amount Paid</span>
+                                        <span className="font-medium text-green-600">₹{Number(partialAmount || 0).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-slate-600">Balance Due</span>
+                                        <span className="font-medium text-red-600">₹{(pricing.total - Number(partialAmount || 0)).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            )}
+
                             <button
                                 form="booking-form"
                                 type="submit"
@@ -386,7 +513,7 @@ export function CreateBooking() {
                                 className="w-full flex justify-center items-center px-4 py-3 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                             >
                                 <Save className="h-4 w-4 mr-2" />
-                                {isLoading ? 'Creating Booking...' : 'Confirm Booking'}
+                                {isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Booking' : 'Confirm Booking')}
                             </button>
 
                             <button

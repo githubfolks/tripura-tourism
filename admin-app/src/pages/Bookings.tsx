@@ -1,4 +1,4 @@
-import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle, Plus } from 'lucide-react';
+import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle, Plus, Edit, Eye } from 'lucide-react';
 import { mockBookings } from '../lib/mockData';
 import { cn } from '../lib/utils';
 import { useState } from 'react';
@@ -16,9 +16,10 @@ export function Bookings() {
         ? mockBookings.filter(b => b.source === 'MAKEMYTRIP')
         : mockBookings;
 
-    const filtered = filter === 'ALL'
+    const filtered = (filter === 'ALL'
         ? availableBookings
-        : availableBookings.filter(b => b.booking_status === filter);
+        : availableBookings.filter(b => b.booking_status === filter)
+    ).sort((a, b) => new Date(b.booked_at).getTime() - new Date(a.booked_at).getTime());
 
     return (
         <div className="space-y-6">
@@ -133,12 +134,20 @@ export function Bookings() {
                                             {booking.booking_status}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
+                                    <td className="px-6 py-4 text-right flex justify-end gap-2">
                                         <button
                                             onClick={() => navigate(`/bookings/${booking.id}`)}
-                                            className="text-blue-600 hover:text-blue-900 text-xs font-medium"
+                                            className="text-slate-400 hover:text-blue-600 transition-colors"
+                                            title="View Details"
                                         >
-                                            View Details
+                                            <Eye className="h-4 w-4" />
+                                        </button>
+                                        <button
+                                            onClick={() => navigate(`/bookings/${booking.id}/edit`)}
+                                            className="text-slate-400 hover:text-blue-600 transition-colors"
+                                            title="Edit Booking"
+                                        >
+                                            <Edit className="h-4 w-4" />
                                         </button>
                                     </td>
                                 </tr>
