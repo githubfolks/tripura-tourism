@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChevronLeft, Calendar, User as UserIcon, CreditCard, Save, Upload } from 'lucide-react';
 import { useEffect } from 'react';
-import { mockPackages, mockAccommodations, mockBookings, mockExperiences } from '../lib/mockData';
+import { mockPackages, mockAccommodations, mockBookings, mockExperiences, mockDestinations } from '../lib/mockData';
 import { useAuth } from '../contexts/AuthContext';
 import type { PaymentStatus } from '../types/schema';
 
@@ -15,6 +15,7 @@ export function CreateBooking() {
 
     // Form State
     const [bookingType, setBookingType] = useState<'PACKAGE' | 'EXPERIENCE' | 'ACCOMMODATION'>('ACCOMMODATION');
+    const [selectedDestinationId, setSelectedDestinationId] = useState('');
     const [selectedItemId, setSelectedItemId] = useState('');
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
@@ -57,6 +58,18 @@ export function CreateBooking() {
             breakdown.push({ label: 'Base Rate', value: price });
             breakdown.push({ label: 'Nights', value: days });
             breakdown.push({ label: 'Units', value: unitCount });
+
+            // Extra Boarder Logic
+            const extraBoarderPrice = (item as any).extra_boarder_price || 0;
+            const extraBoarders = Math.max(0, adults - (unitCount * 2)); // Assuming 2 adults per unit base
+
+            if (extraBoarders > 0 && extraBoarderPrice > 0) {
+                const extraCost = extraBoarders * extraBoarderPrice * days;
+                total += extraCost;
+                breakdown.push({ label: 'Extra Boarders', value: extraBoarders });
+                breakdown.push({ label: 'Extra Boarder Rate', value: extraBoarderPrice });
+                breakdown.push({ label: 'Extra Boarder Cost', value: extraCost });
+            }
         } else {
             // Package & Experience Pricing (Per person)
             // Assuming Experience also follows simple per-person or fixed logic.
@@ -197,7 +210,7 @@ export function CreateBooking() {
                             </h2>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
+                                <div className="md:col-span-2">
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Booking Type</label>
                                     <div className="flex gap-4 p-1 bg-slate-50 rounded-lg border border-slate-200">
                                         <button
@@ -205,7 +218,7 @@ export function CreateBooking() {
                                             onClick={() => setBookingType('ACCOMMODATION')}
                                             className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'ACCOMMODATION' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'}`}
                                         >
-                                            Stay
+                                            Destination
                                         </button>
                                         <button
                                             type="button"
@@ -224,6 +237,31 @@ export function CreateBooking() {
                                     </div>
                                 </div>
 
+                                {bookingType === 'ACCOMMODATION' && (
+                                    <div>
+                                        <label className="block text-sm font-medium text-slate-700 mb-2">Select Destination</label>
+                                        <select
+                                            required
+                                            value={selectedDestinationId}
+                                            onChange={(e) => {
+                                                setSelectedDestinationId(e.target.value);
+                                                setSelectedItemId(''); // Reset room selection
+                                            }}
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        >
+                                            <option value="">Select Destination</option>
+                                            {mockDestinations
+                                                .filter(d =>
+                                                    // If user is Asset Manager, only show assigned destinations
+                                                    !user?.assigned_destinations || user.assigned_destinations.includes(d.id)
+                                                )
+                                                .map(dest => (
+                                                    <option key={dest.id} value={dest.id}>{dest.name}</option>
+                                                ))}
+                                        </select>
+                                    </div>
+                                )}
+
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-2">
                                         Select {bookingType === 'ACCOMMODATION' ? 'Room/Unit' : bookingType === 'EXPERIENCE' ? 'Activity' : 'Package'}
@@ -232,12 +270,15 @@ export function CreateBooking() {
                                         required
                                         value={selectedItemId}
                                         onChange={(e) => setSelectedItemId(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        disabled={bookingType === 'ACCOMMODATION' && !selectedDestinationId}
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
                                     >
                                         <option value="">Select Option</option>
-                                        {bookingType === 'ACCOMMODATION' && mockAccommodations.map(item => (
-                                            <option key={item.id} value={item.id}>{item.name} ({item.type}) - ₹{item.base_price}</option>
-                                        ))}
+                                        {bookingType === 'ACCOMMODATION' && selectedDestinationId && mockAccommodations
+                                            .filter(item => (item as any).destination_id === selectedDestinationId)
+                                            .map(item => (
+                                                <option key={item.id} value={item.id}>{item.name} ({item.type}) - ₹{item.base_price}</option>
+                                            ))}
                                         {bookingType === 'EXPERIENCE' && mockExperiences.map(item => (
                                             <option key={item.id} value={item.id}>{item.name} ({item.duration}) - ₹{item.price_inr}</option>
                                         ))}

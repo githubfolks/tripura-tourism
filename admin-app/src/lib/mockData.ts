@@ -36,10 +36,10 @@ export const mockUsers: User[] = [
 export const mockDestinations: Destination[] = [
     {
         id: "d1",
-        name: "Ujjayanta Palace",
-        slug: "ujjayanta-palace",
-        description: "Former royal palace of the Tripura kings, now a museum.",
-        district: "West Tripura",
+        name: "Rowa",
+        slug: "rowa-resort",
+        description: "Experience nature at Rowa.",
+        district: "North Tripura",
         best_time_to_visit: "October to March",
         is_featured: true,
         is_active: true,
@@ -49,12 +49,56 @@ export const mockDestinations: Destination[] = [
     },
     {
         id: "d2",
-        name: "Neermahal",
-        slug: "neermahal",
-        description: "A water palace built in the middle of Rudrasagar Lake.",
+        name: "Sepahijala",
+        slug: "sepahijala-resort",
+        description: "Wildlife and nature at Sepahijala.",
         district: "Sepahijala",
         best_time_to_visit: "Winter",
         is_featured: true,
+        is_active: true,
+        created_at: "2024-01-12T10:00:00Z",
+        updated_at: "2024-01-12T10:00:00Z",
+    },
+    {
+        id: "d3",
+        name: "Tepania",
+        slug: "tepania-resort",
+        description: "Eco-park and resort.",
+        district: "Gomati",
+        is_featured: false,
+        is_active: true,
+        created_at: "2024-01-12T10:00:00Z",
+        updated_at: "2024-01-12T10:00:00Z",
+    },
+    {
+        id: "d4",
+        name: "Trishna-Joychandpur",
+        slug: "trishna-joychandpur",
+        description: "Bison reserve and resort.",
+        district: "South Tripura",
+        is_featured: false,
+        is_active: true,
+        created_at: "2024-01-12T10:00:00Z",
+        updated_at: "2024-01-12T10:00:00Z",
+    },
+    {
+        id: "d5",
+        name: "Trishna-Rajnagar",
+        slug: "trishna-rajnagar",
+        description: "Trishna wildlife sanctuary resort.",
+        district: "South Tripura",
+        is_featured: false,
+        is_active: true,
+        created_at: "2024-01-12T10:00:00Z",
+        updated_at: "2024-01-12T10:00:00Z",
+    },
+    {
+        id: "d6",
+        name: "Ambassa Log Hut",
+        slug: "ambassa-log-hut",
+        description: "Log huts in Ambassa.",
+        district: "Dhalai",
+        is_featured: false,
         is_active: true,
         created_at: "2024-01-12T10:00:00Z",
         updated_at: "2024-01-12T10:00:00Z",
@@ -62,10 +106,22 @@ export const mockDestinations: Destination[] = [
 ];
 
 export const mockAccommodations = [
-    { id: 'acc1', name: 'Deluxe Room', type: 'Room', base_price: 3500, max_occupancy: 2 },
-    { id: 'acc2', name: 'Royal Suite', type: 'Room', base_price: 8500, max_occupancy: 2 },
-    { id: 'acc3', name: 'Camping Tent', type: 'Tent', base_price: 1500, max_occupancy: 2 },
-    { id: 'acc4', name: 'Family Cottage', type: 'Cottage', base_price: 5500, max_occupancy: 4 },
+    // Rowa (d1)
+    { id: 'acc1', destination_id: 'd1', name: 'Premium double room', type: 'Room', base_price: 3000, extra_boarder_price: 1000, max_occupancy: 2 },
+    { id: 'acc2', destination_id: 'd1', name: 'Deluxe double room', type: 'Room', base_price: 2500, extra_boarder_price: 0, max_occupancy: 2 },
+    // Sepahijala (d2)
+    { id: 'acc3', destination_id: 'd2', name: 'Premium Cottage', type: 'Cottage', base_price: 4000, extra_boarder_price: 1000, max_occupancy: 2 },
+    // Tepania (d3)
+    { id: 'acc4', destination_id: 'd3', name: 'Premium double room', type: 'Room', base_price: 2500, extra_boarder_price: 1000, max_occupancy: 2 },
+    { id: 'acc5', destination_id: 'd3', name: 'Deluxe double room', type: 'Room', base_price: 2000, extra_boarder_price: 0, max_occupancy: 2 },
+    { id: 'acc6', destination_id: 'd3', name: 'Tree house', type: 'Room', base_price: 3000, extra_boarder_price: 0, max_occupancy: 2 },
+    // Trishna-Joychandpur (d4)
+    { id: 'acc7', destination_id: 'd4', name: 'Premium double room', type: 'Room', base_price: 3000, extra_boarder_price: 0, max_occupancy: 2 },
+    // Trishna-Rajnagar (d5)
+    { id: 'acc8', destination_id: 'd5', name: 'Premium double room', type: 'Room', base_price: 3000, extra_boarder_price: 1000, max_occupancy: 2 },
+    { id: 'acc9', destination_id: 'd5', name: 'Deluxe double room', type: 'Room', base_price: 2000, extra_boarder_price: 0, max_occupancy: 2 },
+    // Ambassa Log Hut (d6)
+    { id: 'acc10', destination_id: 'd6', name: 'Deluxe room', type: 'Room', base_price: 3000, extra_boarder_price: 1000, max_occupancy: 2 },
 ];
 
 export const mockExperiences = [

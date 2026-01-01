@@ -129,7 +129,9 @@ CREATE TABLE accommodations (
     -- ROOM | TENT | COTTAGE | DORMITORY
     
     base_price NUMERIC(10,2) NOT NULL,
-    max_occupancy INT DEFAULT 2,
+    base_occupancy INT DEFAULT 2,          -- Number of pax included in base_price
+    extra_boarder_price NUMERIC(10,2) DEFAULT 0, -- Cost per extra person
+    max_occupancy INT DEFAULT 3,           -- Total capacity (base + extra)
     total_units INT DEFAULT 1,
     
     is_active BOOLEAN DEFAULT TRUE,
@@ -228,6 +230,14 @@ CREATE TABLE api_access_logs (
     status_code INT,
     created_at TIMESTAMP DEFAULT NOW()
 );
+CREATE TYPE payment_status_enum AS ENUM (
+    'PENDING',
+    'PAID',
+    'PARTIAL',
+    'FAILED',
+    'REFUNDED'
+);
+
 CREATE TABLE bookings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
@@ -249,6 +259,8 @@ CREATE TABLE bookings (
     pax_children INT DEFAULT 0,
 
     total_amount NUMERIC(12,2) NOT NULL,
+    amount_paid NUMERIC(12,2) DEFAULT 0,
+    payment_status payment_status_enum DEFAULT 'PENDING',
     currency VARCHAR(10) DEFAULT 'INR',
 
     booked_at TIMESTAMP DEFAULT NOW(),
@@ -279,6 +291,7 @@ CREATE TABLE booking_customers (
 
     id_type VARCHAR(50), -- Aadhaar, Passport
     id_number VARCHAR(50),
+    id_proof_url TEXT,
 
     created_at TIMESTAMP DEFAULT NOW()
 );
