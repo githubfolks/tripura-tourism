@@ -11,4 +11,8 @@ https://tripura-tourism-pt3c.vercel.app
 
 
 ==============================
-
+ 
+Users:
+manager@tripura.gov.in
+admin@tripura.gov.in
+Password: demo
