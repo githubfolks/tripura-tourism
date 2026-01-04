@@ -204,6 +204,27 @@ CREATE TABLE package_amenities (
     amenity_id UUID REFERENCES amenities(id) ON DELETE CASCADE,
     PRIMARY KEY (package_id, amenity_id)
 );
+
+CREATE TABLE package_pricing (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+
+    package_id UUID REFERENCES packages(id) ON DELETE CASCADE,
+
+    pax_type VARCHAR(20) NOT NULL,
+    -- ADULT | CHILD | INFANT
+
+    price_per_pax NUMERIC(10,2) NOT NULL,
+
+    min_pax INT DEFAULT 1,
+    max_pax INT,
+
+    valid_from DATE,
+    valid_to DATE,
+
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+
 CREATE TABLE api_partners (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(150) NOT NULL,
@@ -382,23 +403,18 @@ CREATE TABLE booking_access_policies (
 CREATE TABLE booking_versions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     booking_id UUID REFERENCES bookings(id),
-
     version_no INT,
     snapshot JSONB,
-
     created_by UUID REFERENCES users(id),
     created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE cancellation_policies (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-
     source VARCHAR(50),
     -- PORTAL | MAKEMYTRIP
-
     hours_before_travel INT,
     refund_percentage INT,
-
     is_active BOOLEAN DEFAULT TRUE
 );
  
@@ -410,36 +426,15 @@ CREATE TABLE booking_customer_contacts (
     phone VARCHAR(20)
 );
 
-CREATE TABLE package_pricing (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-
-    package_id UUID REFERENCES packages(id) ON DELETE CASCADE,
-
-    pax_type VARCHAR(20) NOT NULL,
-    -- ADULT | CHILD | INFANT
-
-    price_per_pax NUMERIC(10,2) NOT NULL,
-
-    min_pax INT DEFAULT 1,
-    max_pax INT,
-
-    valid_from DATE,
-    valid_to DATE,
-
-    is_active BOOLEAN DEFAULT TRUE
-);
 
 CREATE TABLE payments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     booking_id UUID REFERENCES bookings(id),
-
     payment_gateway VARCHAR(50),
     transaction_id VARCHAR(100),
-
     amount NUMERIC(10,2),
     status VARCHAR(20),
     paid_at TIMESTAMP,
-
     settlement_status VARCHAR(20),
     settled_at TIMESTAMP
 );
@@ -447,13 +442,10 @@ CREATE TABLE payments (
 CREATE TABLE partner_settlements (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     partner_id UUID REFERENCES api_partners(id),
-
     settlement_period_start DATE,
     settlement_period_end DATE,
-
     total_bookings INT,
     payable_amount NUMERIC(12,2),
-
     status VARCHAR(20),
     settled_at TIMESTAMP
 );
