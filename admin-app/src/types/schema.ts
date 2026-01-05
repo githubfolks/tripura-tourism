@@ -49,7 +49,7 @@ export interface Package {
     created_at: string;
 }
 
-export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'ON_HOLD';
+export type BookingStatus = 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED' | 'FAILED' | 'ON_HOLD' | 'CHECKED_IN' | 'CHECKED_OUT';
 
 export type PaymentStatus = 'PENDING' | 'PAID' | 'PARTIAL' | 'FAILED' | 'REFUNDED';
 
@@ -68,7 +68,9 @@ export interface Booking {
     pax_children: number;
     total_amount: number;
     amount_paid?: number;
+    additional_revenue?: number;
     payment_status?: PaymentStatus;
+    payment_reference?: string;
     currency: string;
     booked_at: string;
     customer_name: string; // From booking_customers

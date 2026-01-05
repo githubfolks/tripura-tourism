@@ -34,6 +34,7 @@ export function CreateBooking() {
     const [paymentMethod, setPaymentMethod] = useState('CASH');
     const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>('PENDING');
     const [partialAmount, setPartialAmount] = useState<number | ''>('');
+    const [paymentReference, setPaymentReference] = useState('');
 
     // Calculate Pricing
     const pricing = useMemo(() => {
@@ -115,6 +116,7 @@ export function CreateBooking() {
                 // Load payment status (prefer explicit field, fallback to amount inferrence for old data)
                 if (booking.payment_status) {
                     setPaymentStatus(booking.payment_status);
+                    if (booking.payment_reference) setPaymentReference(booking.payment_reference);
                     if (booking.payment_status === 'PARTIAL' && booking.amount_paid) {
                         setPartialAmount(booking.amount_paid);
                     }
@@ -157,7 +159,9 @@ export function CreateBooking() {
             pax_children: children,
             total_amount: pricing.total,
             amount_paid: paymentStatus === 'PARTIAL' ? Number(partialAmount) : (paymentStatus === 'PAID' ? pricing.total : 0),
+
             payment_status: paymentStatus,
+            payment_reference: paymentStatus !== 'PENDING' && paymentMethod !== 'CASH' ? paymentReference : undefined,
             currency: 'INR',
             booked_at: new Date().toISOString(),
             customer_name: leadGuest,
@@ -192,8 +196,8 @@ export function CreateBooking() {
                     <ChevronLeft className="h-6 w-6 text-slate-500" />
                 </button>
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-800">{isEditMode ? 'Edit Booking' : 'New Booking'}</h1>
-                    <p className="text-slate-500 text-sm">{isEditMode ? 'Update booking details.' : 'Create a new walk-in or offline booking.'}</p>
+                    <h1 className="text-2xl font-bold text-slate-800">{isEditMode ? 'Edit Payment' : 'New Booking'}</h1>
+                    <p className="text-slate-500 text-sm">{isEditMode ? 'Update payment status and details.' : 'Create a new walk-in or offline booking.'}</p>
                 </div>
             </div>
 
@@ -215,22 +219,25 @@ export function CreateBooking() {
                                     <div className="flex gap-4 p-1 bg-slate-50 rounded-lg border border-slate-200">
                                         <button
                                             type="button"
+                                            disabled={isEditMode}
                                             onClick={() => setBookingType('ACCOMMODATION')}
-                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'ACCOMMODATION' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'}`}
+                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'ACCOMMODATION' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'} ${isEditMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         >
                                             Destination
                                         </button>
                                         <button
                                             type="button"
+                                            disabled={isEditMode}
                                             onClick={() => setBookingType('EXPERIENCE')}
-                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'EXPERIENCE' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'}`}
+                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'EXPERIENCE' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'} ${isEditMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         >
                                             Experience
                                         </button>
                                         <button
                                             type="button"
+                                            disabled={isEditMode}
                                             onClick={() => setBookingType('PACKAGE')}
-                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'PACKAGE' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'}`}
+                                            className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${bookingType === 'PACKAGE' ? 'bg-white shadow text-blue-600' : 'text-slate-600 hover:text-slate-800'} ${isEditMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                                         >
                                             Package
                                         </button>
@@ -242,12 +249,13 @@ export function CreateBooking() {
                                         <label className="block text-sm font-medium text-slate-700 mb-2">Select Destination</label>
                                         <select
                                             required
+                                            disabled={isEditMode}
                                             value={selectedDestinationId}
                                             onChange={(e) => {
                                                 setSelectedDestinationId(e.target.value);
                                                 setSelectedItemId(''); // Reset room selection
                                             }}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-500"
                                         >
                                             <option value="">Select Destination</option>
                                             {mockDestinations
@@ -270,7 +278,7 @@ export function CreateBooking() {
                                         required
                                         value={selectedItemId}
                                         onChange={(e) => setSelectedItemId(e.target.value)}
-                                        disabled={bookingType === 'ACCOMMODATION' && !selectedDestinationId}
+                                        disabled={isEditMode || (bookingType === 'ACCOMMODATION' && !selectedDestinationId)}
                                         className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100 disabled:text-slate-400"
                                     >
                                         <option value="">Select Option</option>
@@ -295,9 +303,10 @@ export function CreateBooking() {
                                     <input
                                         type="date"
                                         required
+                                        disabled={isEditMode}
                                         value={checkIn}
                                         onChange={(e) => setCheckIn(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -307,9 +316,10 @@ export function CreateBooking() {
                                         <input
                                             type="date"
                                             required={bookingType === 'ACCOMMODATION'}
+                                            disabled={isEditMode}
                                             value={checkOut}
                                             onChange={(e) => setCheckOut(e.target.value)}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                         />
                                     </div>
                                 )}
@@ -320,9 +330,10 @@ export function CreateBooking() {
                                         <input
                                             type="number"
                                             min="1"
+                                            disabled={isEditMode}
                                             value={unitCount}
                                             onChange={(e) => setUnitCount(parseInt(e.target.value))}
-                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                         />
                                     </div>
                                 )}
@@ -342,10 +353,11 @@ export function CreateBooking() {
                                     <input
                                         type="text"
                                         required
+                                        disabled={isEditMode}
                                         placeholder="Full Name"
                                         value={leadGuest}
                                         onChange={(e) => setLeadGuest(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -353,10 +365,11 @@ export function CreateBooking() {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
                                     <input
                                         type="email"
+                                        disabled={isEditMode}
                                         placeholder="guest@example.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -365,10 +378,11 @@ export function CreateBooking() {
                                     <input
                                         type="tel"
                                         required
+                                        disabled={isEditMode}
                                         placeholder="+91 98765 43210"
                                         value={phone}
                                         onChange={(e) => setPhone(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -378,9 +392,10 @@ export function CreateBooking() {
                                         type="number"
                                         min="1"
                                         required
+                                        disabled={isEditMode}
                                         value={adults}
                                         onChange={(e) => setAdults(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -389,9 +404,10 @@ export function CreateBooking() {
                                     <input
                                         type="number"
                                         min="0"
+                                        disabled={isEditMode}
                                         value={children}
                                         onChange={(e) => setChildren(parseInt(e.target.value))}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     />
                                 </div>
 
@@ -399,8 +415,9 @@ export function CreateBooking() {
                                     <label className="block text-sm font-medium text-slate-700 mb-2">ID Proof Type</label>
                                     <select
                                         value={idType}
+                                        disabled={isEditMode}
                                         onChange={(e) => setIdType(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-slate-100"
                                     >
                                         <option value="AADHAR">Aadhar Card</option>
                                         <option value="DRIVING_LICENSE">Driving License</option>
@@ -415,9 +432,10 @@ export function CreateBooking() {
                                     <div className="relative border-2 border-dashed border-slate-300 rounded-lg p-4 hover:bg-slate-50 transition-colors text-center cursor-pointer">
                                         <input
                                             type="file"
+                                            disabled={isEditMode}
                                             accept="image/*,.pdf"
                                             onChange={(e) => e.target.files && setIdFile(e.target.files[0])}
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
                                         />
                                         <div className="flex flex-col items-center gap-2">
                                             <Upload className="h-6 w-6 text-slate-400" />
@@ -451,19 +469,36 @@ export function CreateBooking() {
                                         <option value="PARTIAL">Partial Payment</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-2">Payment Method</label>
-                                    <select
-                                        value={paymentMethod}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    >
-                                        <option value="CASH">Cash</option>
-                                        <option value="CARD">Credit/Debit Card</option>
-                                        <option value="UPI">UPI</option>
-                                        <option value="BANK_TRANSFER">Bank Transfer</option>
-                                    </select>
-                                </div>
+                                {paymentStatus !== 'PENDING' && (
+                                    <>
+                                        <div>
+                                            <label className="block text-sm font-medium text-slate-700 mb-2">Payment Method</label>
+                                            <select
+                                                value={paymentMethod}
+                                                onChange={(e) => setPaymentMethod(e.target.value)}
+                                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            >
+                                                <option value="CASH">Cash</option>
+                                                <option value="CARD">Credit/Debit Card</option>
+                                                <option value="UPI">UPI</option>
+                                                <option value="BANK_TRANSFER">Bank Transfer</option>
+                                            </select>
+                                        </div>
+                                        {paymentMethod !== 'CASH' && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-slate-700 mb-2">Reference Number</label>
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={paymentReference}
+                                                    onChange={(e) => setPaymentReference(e.target.value)}
+                                                    placeholder="Transaction ID / Ref No."
+                                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                />
+                                            </div>
+                                        )}
+                                    </>
+                                )}
 
                                 {paymentStatus === 'PARTIAL' && (
                                     <div className="md:col-span-2">
@@ -554,7 +589,7 @@ export function CreateBooking() {
                                 className="w-full flex justify-center items-center px-4 py-3 text-sm font-medium text-white bg-slate-900 rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                             >
                                 <Save className="h-4 w-4 mr-2" />
-                                {isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Booking' : 'Confirm Booking')}
+                                {isLoading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Payment' : 'Confirm Booking')}
                             </button>
 
                             <button

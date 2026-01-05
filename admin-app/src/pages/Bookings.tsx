@@ -1,4 +1,4 @@
-import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle, Plus, Edit, Eye } from 'lucide-react';
+import { Search, Filter, Calendar, CreditCard, ChevronDown, CheckCircle, XCircle, Plus, Edit, Eye, LogIn, LogOut, Save, X } from 'lucide-react';
 import { mockBookings } from '../lib/mockData';
 import { cn } from '../lib/utils';
 import { useState } from 'react';
@@ -7,19 +7,48 @@ import { useNavigate } from 'react-router-dom';
 
 export function Bookings() {
     const [filter, setFilter] = useState('ALL');
+    const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+    const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+    const [additionalRevenue, setAdditionalRevenue] = useState<number | ''>('');
+    const [bookings, setBookings] = useState(mockBookings); // Use local state to simulate updates
     const { isPartner } = useAuth();
     const navigate = useNavigate();
 
     // Filter bookings: if user is partner, show only their bookings (where source matches or partner_id matches - simulation)
     // For demo: if Partner, show bookings with source='MAKEMYTRIP'
     const availableBookings = isPartner
-        ? mockBookings.filter(b => b.source === 'MAKEMYTRIP')
-        : mockBookings;
+        ? bookings.filter(b => b.source === 'MAKEMYTRIP')
+        : bookings;
 
     const filtered = (filter === 'ALL'
         ? availableBookings
         : availableBookings.filter(b => b.booking_status === filter)
     ).sort((a, b) => new Date(b.booked_at).getTime() - new Date(a.booked_at).getTime());
+
+    const handleCheckIn = (id: string) => {
+        setBookings(prev => prev.map(b =>
+            b.id === id ? { ...b, booking_status: 'CHECKED_IN' } : b
+        ));
+    };
+
+    const initiationCheckOut = (id: string) => {
+        setSelectedBookingId(id);
+        setAdditionalRevenue('');
+        setShowCheckoutModal(true);
+    };
+
+    const handleCheckOut = () => {
+        if (!selectedBookingId) return;
+        setBookings(prev => prev.map(b =>
+            b.id === selectedBookingId ? {
+                ...b,
+                booking_status: 'CHECKED_OUT',
+                additional_revenue: Number(additionalRevenue) || 0
+            } : b
+        ));
+        setShowCheckoutModal(false);
+        setSelectedBookingId(null);
+    };
 
     return (
         <div className="space-y-6">
@@ -63,7 +92,7 @@ export function Bookings() {
                     </div>
 
                     <div className="flex gap-2">
-                        {['ALL', 'PENDING', 'CONFIRMED', 'CANCELLED'].map((status) => (
+                        {['ALL', 'PENDING', 'CONFIRMED', 'CHECKED_IN', 'CHECKED_OUT', 'CANCELLED'].map((status) => (
                             <button
                                 key={status}
                                 onClick={() => setFilter(status)}
@@ -117,6 +146,11 @@ export function Bookings() {
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="font-medium text-slate-900">₹{booking.total_amount.toLocaleString()}</div>
+                                        {(booking.total_amount - (booking.amount_paid || 0)) > 0 && (
+                                            <div className="text-xs text-red-600 font-medium">
+                                                Pending: ₹{(booking.total_amount - (booking.amount_paid || 0)).toLocaleString()}
+                                            </div>
+                                        )}
                                         <div className="flex items-center text-xs text-slate-500 mt-0.5">
                                             <CreditCard className="h-3 w-3 mr-1" /> Paid via Gateway
                                         </div>
@@ -130,11 +164,31 @@ export function Bookings() {
                                                         "bg-slate-100 text-slate-800"
                                         )}>
                                             {booking.booking_status === 'CONFIRMED' && <CheckCircle className="h-3 w-3 mr-1" />}
+                                            {booking.booking_status === 'CHECKED_IN' && <LogIn className="h-3 w-3 mr-1" />}
+                                            {booking.booking_status === 'CHECKED_OUT' && <LogOut className="h-3 w-3 mr-1" />}
                                             {booking.booking_status === 'CANCELLED' && <XCircle className="h-3 w-3 mr-1" />}
-                                            {booking.booking_status}
+                                            {booking.booking_status.replace('_', ' ')}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right flex justify-end gap-2">
+                                        {booking.booking_status === 'CONFIRMED' && (
+                                            <button
+                                                onClick={() => handleCheckIn(booking.id)}
+                                                className="text-slate-400 hover:text-green-600 transition-colors"
+                                                title="Check In"
+                                            >
+                                                <LogIn className="h-4 w-4" />
+                                            </button>
+                                        )}
+                                        {booking.booking_status === 'CHECKED_IN' && (
+                                            <button
+                                                onClick={() => initiationCheckOut(booking.id)}
+                                                className="text-slate-400 hover:text-orange-600 transition-colors"
+                                                title="Check Out"
+                                            >
+                                                <LogOut className="h-4 w-4" />
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => navigate(`/bookings/${booking.id}`)}
                                             className="text-slate-400 hover:text-blue-600 transition-colors"
@@ -161,6 +215,52 @@ export function Bookings() {
                     )}
                 </div>
             </div>
-        </div>
+
+
+            {/* Check-out Modal */}
+            {
+                showCheckoutModal && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+                        <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in duration-200">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-xl font-bold text-slate-900">Confirm Check-out</h2>
+                                <button onClick={() => setShowCheckoutModal(false)} className="text-slate-400 hover:text-slate-600">
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
+
+                            <div className="mb-6">
+                                <label className="block text-sm font-medium text-slate-700 mb-2">Additional Revenue Generated (₹)</label>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    value={additionalRevenue}
+                                    onChange={(e) => setAdditionalRevenue(e.target.value ? Number(e.target.value) : '')}
+                                    placeholder="e.g. 500"
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                />
+                                <p className="text-xs text-slate-500 mt-1">Enter 0 if no extra services were used.</p>
+                            </div>
+
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => setShowCheckoutModal(false)}
+                                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleCheckOut}
+                                    className="flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+                                >
+                                    <Save className="h-4 w-4 mr-2" />
+                                    Complete Check-out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+        </div >
     );
 }
