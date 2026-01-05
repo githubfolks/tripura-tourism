@@ -1,27 +1,72 @@
 import { Search, Plus, MapPin, Edit2, Trash2, Star } from 'lucide-react';
 import { mockDestinations } from '../lib/mockData';
+import { destinationsService } from '../lib/destinations';
+import { CATALOG_BASE_URL } from '../lib/api';
+import type { Destination } from '../types/schema';
 import { cn } from '../lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Destinations() {
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
     const [searchTerm, setSearchTerm] = useState('');
     // Local state for immediate UI feedback, syncing with mockData
-    const [destinations, setDestinations] = useState(mockDestinations);
+    const [destinations, setDestinations] = useState<Destination[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    const toggleFeatured = (id: string, currentStatus: boolean | undefined) => {
-        // Update local state
-        const updatedDestinations = destinations.map(dest =>
-            dest.id === id ? { ...dest, is_featured: !currentStatus } : dest
-        );
-        setDestinations(updatedDestinations);
+    const getImageUrl = (url: string) => {
+        if (!url) return '';
+        if (url.startsWith('http')) return url;
+        return `${CATALOG_BASE_URL}${url}`;
+    };
 
-        // Update mock data reference (for persistence across navigation in this session)
-        const mockIndex = mockDestinations.findIndex(d => d.id === id);
-        if (mockIndex !== -1) {
-            mockDestinations[mockIndex].is_featured = !currentStatus;
+    useEffect(() => {
+        const fetchDestinations = async () => {
+            try {
+                const data = await destinationsService.getAll();
+                setDestinations(data);
+            } catch (error) {
+                console.error("Failed to fetch destinations:", error);
+                // Fallback to empty or handle error UI
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchDestinations();
+    }, []);
+
+    const toggleFeatured = async (id: string, currentStatus: boolean | undefined) => {
+        const newStatus = !currentStatus;
+        try {
+            // Optimistic update
+            setDestinations(prev => prev.map(dest =>
+                dest.id === id ? { ...dest, is_featured: newStatus } : dest
+            ));
+
+            await destinationsService.update(id, { is_featured: newStatus });
+        } catch (error) {
+            console.error("Failed to update featured status:", error);
+            // Revert on failure
+            setDestinations(prev => prev.map(dest =>
+                dest.id === id ? { ...dest, is_featured: !newStatus } : dest // revert to old status (which is !newStatus)
+            ));
+        }
+    };
+
+    const handleDelete = async (id: string, name: string) => {
+        if (window.confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) {
+            try {
+                setDestinations(prev => prev.filter(d => d.id !== id));
+                await destinationsService.delete(id);
+            } catch (error) {
+                console.error("Failed to delete destination:", error);
+                alert("Failed to delete destination.");
+                // Restore state
+                const data = await destinationsService.getAll();
+                setDestinations(data);
+            }
         }
     };
 
@@ -102,7 +147,7 @@ export function Destinations() {
                                         <td className="px-6 py-4">
                                             <div className="h-10 w-16 bg-slate-200 rounded overflow-hidden">
                                                 {dest.images?.[0] ?
-                                                    <img src={dest.images[0]} alt={dest.name} className="h-full w-full object-cover" /> :
+                                                    <img src={getImageUrl(dest.images[0].image_url)} alt={dest.name} className="h-full w-full object-cover" /> :
                                                     <div className="h-full w-full flex items-center justify-center text-slate-400"><MapPin className="h-4 w-4" /></div>
                                                 }
                                             </div>
@@ -134,8 +179,8 @@ export function Destinations() {
                                         </td>
                                         <td className="px-6 py-4 text-right">
                                             <div className="flex items-center justify-end space-x-2">
-                                                <button className="text-slate-400 hover:text-blue-600"><Edit2 className="h-4 w-4" /></button>
-                                                <button className="text-slate-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
+                                                <button onClick={() => navigate(`/destinations/${dest.id}/edit`)} className="text-slate-400 hover:text-blue-600"><Edit2 className="h-4 w-4" /></button>
+                                                <button onClick={() => handleDelete(dest.id, dest.name)} className="text-slate-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></button>
                                             </div>
                                         </td>
                                     </tr>
@@ -151,8 +196,8 @@ export function Destinations() {
                             <div key={dest.id} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow group relative">
                                 <div className="h-40 bg-slate-200 relative">
                                     {dest.images?.[0] ?
-                                        <img src={dest.images[0]} alt={dest.name} className="h-full w-full object-cover" /> :
-                                        <div className="h-full w-full flex items-center justify-center text-slate-400"><MapPin className="h-8 w-8" /></div>
+                                        <img src={getImageUrl(dest.images[0].image_url)} alt={dest.name} className="h-48 w-full object-cover" /> :
+                                        <div className="h-48 w-full bg-slate-100 flex items-center justify-center text-slate-400"><MapPin className="h-8 w-8" /></div>
                                     }
                                     <div className="absolute top-2 right-2 flex gap-1">
                                         <button
@@ -185,7 +230,7 @@ export function Destinations() {
                                         {dest.description}
                                     </p>
                                     <div className="flex justify-end pt-3 border-t border-slate-100">
-                                        <button className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center">
+                                        <button onClick={() => navigate(`/destinations/${dest.id}/edit`)} className="text-sm font-medium text-blue-600 hover:text-blue-700 flex items-center">
                                             Manage Details
                                             <Edit2 className="h-3 w-3 ml-2" />
                                         </button>

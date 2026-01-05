@@ -8,11 +8,93 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password123
-      POSTGRES_DB: tripura_tourism_db
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  auth-service:
+    build: ./services/auth
+    container_name: auth_service
+    ports:
+      - "8001:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=postgres
+      - POSTGRES_SCHEMA=tripura_tourism
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  catalog-service:
+    build: ./services/catalog
+    container_name: catalog_service
+    ports:
+      - "8002:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=postgres
+      - POSTGRES_SCHEMA=tripura_tourism
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./services/catalog/app/static:/app/app/static
+
+  inventory-service:
+    build: ./services/inventory
+    container_name: inventory_service
+    ports:
+      - "8003:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=postgres
+      - POSTGRES_SCHEMA=tripura_tourism
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  booking-service:
+    build: ./services/booking
+    container_name: booking_service
+    ports:
+      - "8004:8000"
+    environment:
+      - POSTGRES_SERVER=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password123
+      - POSTGRES_DB=postgres
+      - POSTGRES_SCHEMA=tripura_tourism
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  admin-app:
+    build: ../admin-app
+    container_name: admin_app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ../admin-app:/app
+      - /app/node_modules
+    environment:
+      - VITE_AUTH_API_URL=http://localhost:8001/api/v1
+      - VITE_CATALOG_API_URL=http://localhost:8002/api/v1
+      - VITE_INVENTORY_API_URL=http://localhost:8003/api/v1
+      - VITE_BOOKING_API_URL=http://localhost:8004/api/v1
+
 
 volumes:
   postgres_data:

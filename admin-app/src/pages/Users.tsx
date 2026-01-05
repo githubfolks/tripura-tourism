@@ -1,16 +1,32 @@
-import { Search, Filter, MoreVertical, UserPlus, SlidersHorizontal, UserCheck, UserX } from 'lucide-react';
-import { mockUsers } from '../lib/mockData';
+import { Search, Filter, MoreVertical, UserPlus, SlidersHorizontal, UserCheck, UserX, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { usersService, type User } from '../lib/users';
 
 export function Users() {
     const [filterType, setFilterType] = useState('ALL');
+    const [users, setUsers] = useState<User[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const data = await usersService.getAllUsers();
+                setUsers(data);
+            } catch (error) {
+                console.error('Failed to fetch users', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchUsers();
+    }, []);
+
     const filteredUsers = filterType === 'ALL'
-        ? mockUsers
-        : mockUsers.filter(u => u.user_type === filterType);
+        ? users
+        : users.filter(u => u.user_type === filterType);
 
     return (
         <div className="space-y-6">
@@ -84,61 +100,74 @@ export function Users() {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredUsers.map((user) => (
-                                <tr key={user.id} className="bg-white border-b hover:bg-slate-50 transition-colors">
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center">
-                                            <div className="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold mr-3">
-                                                {user.full_name.charAt(0)}
-                                            </div>
-                                            <div>
-                                                <div className="font-medium text-slate-900">{user.full_name}</div>
-                                                <div className="text-xs text-slate-500">{user.email}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
-                                            {user.user_type.replace('_', ' ')}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center space-x-2">
-                                            {user.is_verified ? (
-                                                <span className="flex items-center text-green-600 text-xs font-medium">
-                                                    <UserCheck className="h-3 w-3 mr-1" /> Verified
-                                                </span>
-                                            ) : (
-                                                <span className="italic text-slate-400 text-xs">Unverified</span>
-                                            )}
-                                            <span className="text-slate-300">|</span>
-                                            <span className={cn(
-                                                "text-xs font-medium",
-                                                user.is_active ? "text-slate-700" : "text-red-500"
-                                            )}>
-                                                {user.is_active ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {new Date(user.created_at).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <button className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
-                                            <MoreVertical className="h-4 w-4" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {filteredUsers.length === 0 && (
+                            {isLoading ? (
                                 <tr>
                                     <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
                                         <div className="flex flex-col items-center justify-center">
-                                            <UserX className="h-8 w-8 text-slate-300 mb-2" />
-                                            <p>No users found matching filter.</p>
+                                            <Loader2 className="h-8 w-8 text-blue-500 animate-spin mb-2" />
+                                            <p>Loading users...</p>
                                         </div>
                                     </td>
                                 </tr>
+                            ) : (
+                                <>
+                                    {filteredUsers.map((user) => (
+                                        <tr key={user.id} className="bg-white border-b hover:bg-slate-50 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <div className="h-10 w-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold mr-3">
+                                                        {user.full_name ? user.full_name.charAt(0) : 'U'}
+                                                    </div>
+                                                    <div>
+                                                        <div className="font-medium text-slate-900">{user.full_name || 'N/A'}</div>
+                                                        <div className="text-xs text-slate-500">{user.email}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                    {user.user_type ? user.user_type.replace('_', ' ') : 'N/A'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center space-x-2">
+                                                    {user.is_verified ? (
+                                                        <span className="flex items-center text-green-600 text-xs font-medium">
+                                                            <UserCheck className="h-3 w-3 mr-1" /> Verified
+                                                        </span>
+                                                    ) : (
+                                                        <span className="italic text-slate-400 text-xs">Unverified</span>
+                                                    )}
+                                                    <span className="text-slate-300">|</span>
+                                                    <span className={cn(
+                                                        "text-xs font-medium",
+                                                        user.is_active ? "text-slate-700" : "text-red-500"
+                                                    )}>
+                                                        {user.is_active ? 'Active' : 'Inactive'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                                            </td>
+                                            <td className="px-6 py-4 text-right">
+                                                <button className="text-slate-400 hover:text-slate-600 p-1 rounded-full hover:bg-slate-100">
+                                                    <MoreVertical className="h-4 w-4" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {filteredUsers.length === 0 && (
+                                        <tr>
+                                            <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <UserX className="h-8 w-8 text-slate-300 mb-2" />
+                                                    <p>No users found matching filter.</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </>
                             )}
                         </tbody>
                     </table>

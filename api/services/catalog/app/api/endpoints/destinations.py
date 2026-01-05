@@ -81,6 +81,24 @@ def create_destination(
         
     return db_destination
 
+@router.get("/id/{destination_id}", response_model=DestinationSchema)
+def read_destination_by_id(
+    *,
+    db: Session = Depends(deps.get_db),
+    destination_id: UUID,
+    current_user_id: str = Depends(deps.get_current_user_id),
+) -> Any:
+    """
+    Get destination by ID.
+    """
+    destination = db.query(Destination).filter(Destination.id == destination_id).first()
+    if not destination:
+        raise HTTPException(
+            status_code=404,
+            detail="Destination not found",
+        )
+    return destination
+
 @router.get("/{slug}", response_model=DestinationSchema)
 def read_destination(
     *,

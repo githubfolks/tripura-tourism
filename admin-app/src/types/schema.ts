@@ -21,6 +21,7 @@ export interface Destination {
     name: string;
     slug: string;
     description?: string;
+    cover_image_url?: string;
     district?: string;
     latitude?: number;
     longitude?: number;
@@ -30,7 +31,30 @@ export interface Destination {
     is_active: boolean;
     created_at: string;
     updated_at: string;
-    images?: string[]; // Simplified from destination_images table
+    images?: DestinationImage[];
+}
+
+export interface DestinationImage {
+    id: string;
+    destination_id: string;
+    image_url: string;
+    caption?: string;
+    sort_order?: number;
+
+export interface Accommodation {
+    id: string;
+    name: string;
+    description?: string;
+    type?: string;
+    base_price: number;
+    base_occupancy?: number;
+    extra_boarder_price?: number;
+    max_occupancy?: number;
+    total_units?: number;
+    is_active: boolean;
+    destination_id: string;
+    created_at: string;
+    updated_at: string;
 }
 
 export type PackageType = 'Budget' | 'Luxury' | 'Family' | 'Adventure';

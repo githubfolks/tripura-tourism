@@ -70,7 +70,7 @@ export function Dashboard() {
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-100 min-w-0">
                     <h3 className="text-lg font-semibold text-slate-800 mb-4">Revenue Trends</h3>
                     <div className="h-80">
                         <ResponsiveContainer width="100%" height="100%">
@@ -93,18 +93,20 @@ export function Dashboard() {
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-100 min-w-0">
                     <h3 className="text-lg font-semibold text-slate-800 mb-4">Bookings Source</h3>
-                    <div className="h-80 flex flex-col justify-center items-center">
+                    <div className="h-80 flex flex-col justify-center">
                         {/* Simple Pie Chart Mockup using CSS/SVG or Recharts Pie */}
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                <XAxis dataKey="name" hide />
-                                <Tooltip cursor={{ fill: 'transparent' }} />
-                                <Bar dataKey="bookings" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
+                        <div className="flex-1 min-h-0">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={data}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                    <XAxis dataKey="name" hide />
+                                    <Tooltip cursor={{ fill: 'transparent' }} />
+                                    <Bar dataKey="bookings" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
                         <p className="mt-4 text-sm text-slate-500 text-center">Breakdown by daily volume</p>
                     </div>
                 </div>

@@ -2,19 +2,14 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-
     full_name VARCHAR(150) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     phone VARCHAR(20),
-
     user_type VARCHAR(50) NOT NULL,
     -- PORTAL_ADMIN | PORTAL_STAFF | PARTNER_ADMIN | PARTNER_USER
-
     partner_id UUID NULL REFERENCES api_partners(id),
-
     is_active BOOLEAN DEFAULT TRUE,
     is_verified BOOLEAN DEFAULT FALSE,
-
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -22,13 +17,10 @@ CREATE TABLE users (
 CREATE TABLE user_credentials (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-
     password_hash TEXT NOT NULL,
     password_algo VARCHAR(50) DEFAULT 'bcrypt',
-
     last_login TIMESTAMP,
     password_updated_at TIMESTAMP,
-
     is_locked BOOLEAN DEFAULT FALSE
 );
 
@@ -59,37 +51,29 @@ CREATE TABLE user_roles (
 CREATE TABLE asset_manager_assignments (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    
     asset_type VARCHAR(50) NOT NULL, 
     -- DESTINATION | EXPERIENCE | PACKAGE
-    
     asset_id UUID NOT NULL, 
     -- ID of the destination/experience/package
-    
     assigned_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE user_sessions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id),
-
     refresh_token TEXT UNIQUE NOT NULL,
     expires_at TIMESTAMP NOT NULL,
-
     ip_address INET,
     user_agent TEXT,
-
     created_at TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE user_activity_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id),
-
     action VARCHAR(150),
     resource_type VARCHAR(100),
     resource_id UUID,
-
     metadata JSONB,
     created_at TIMESTAMP DEFAULT NOW()
 );

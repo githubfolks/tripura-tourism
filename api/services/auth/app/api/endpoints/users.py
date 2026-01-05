@@ -16,6 +16,7 @@ def read_users(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
     limit: int = 100,
+    current_user: User = Depends(deps.get_current_active_user),
 ) -> Any:
     """
     Retrieve users.
@@ -49,8 +50,7 @@ def create_user(
         is_verified=False # Default to false on creation unless specified
     )
     db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+    db.flush() # Flush to generate ID without committing transaction
     
     # Create Credentials
     hashed_password = security.get_password_hash(user_in.password)
@@ -59,9 +59,19 @@ def create_user(
         password_hash=hashed_password
     )
     db.add(db_creds)
-    db.commit()
+    
+    db.commit() # Commit both user and credentials in one transaction
     
     return db_user
+
+@router.get("/me", response_model=UserSchema)
+def read_user_me(
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Get current user.
+    """
+    return current_user
 
 @router.get("/{user_id}", response_model=UserSchema)
 def read_user_by_id(

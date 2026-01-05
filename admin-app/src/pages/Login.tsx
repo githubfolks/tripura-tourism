@@ -7,6 +7,7 @@ export function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const { login, isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
@@ -20,10 +21,11 @@ export function Login() {
         e.preventDefault();
         setIsLoading(true);
         try {
-            await login(email);
+            await login(email, password);
             navigate('/');
         } catch (error) {
             console.error('Login failed', error);
+            setError(error instanceof Error ? error.message : 'Invalid credentials');
         } finally {
             setIsLoading(false);
         }
@@ -41,7 +43,11 @@ export function Login() {
                 </div>
 
                 <div className="p-8">
-
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2 text-red-500 text-sm font-medium">
+                            <span>{error}</span>
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>

@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     POSTGRES_SERVER: str = "localhost"
     POSTGRES_USER: str = "admin"
     POSTGRES_PASSWORD: str = "password123"
-    POSTGRES_DB: str = "tripura_tourism_db"
+    POSTGRES_DB: str = "postgres"
     POSTGRES_PORT: str = "5432"
     POSTGRES_SCHEMA: str = "tripura_tourism" # Same schema for now, monolith DB pattern
 

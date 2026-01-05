@@ -1,17 +1,24 @@
-import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Upload, X, Star } from 'lucide-react';
-import { mockDestinations } from '../lib/mockData';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Upload, X, Star, Plus, Trash2 } from 'lucide-react';
+import { destinationsService } from '../lib/destinations';
+import { storageService } from '../lib/storage';
+import { accommodationsService, type AccommodationCreate } from '../lib/accommodations';
+import { cn } from '../lib/utils';
 
 interface DestinationImage {
     id: string;
     url: string;
     isCover: boolean;
     file?: File;
+    status: 'pending' | 'uploading' | 'success' | 'error';
+    serverUrl?: string; // The URL returned by the server
 }
 
 export function CreateDestination() {
     const navigate = useNavigate();
+    const { id } = useParams();
+    const isEditMode = !!id;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [formData, setFormData] = useState({
         name: '',
@@ -27,67 +34,239 @@ export function CreateDestination() {
     });
 
     const [images, setImages] = useState<DestinationImage[]>([]);
+    // Accommodations can have an ID if they exist on server
+    const [accommodations, setAccommodations] = useState<Partial<AccommodationCreate & { id?: string }>[]>([]);
+    const [deletedAccommodationIds, setDeletedAccommodationIds] = useState<string[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useEffect(() => {
+        if (isEditMode && id) {
+            const fetchData = async () => {
+                setIsLoading(true);
+                try {
+                    const [dest, accs] = await Promise.all([
+                        destinationsService.getById(id),
+                        accommodationsService.getAll(id)
+                    ]);
+
+                    setFormData({
+                        name: dest.name,
+                        slug: dest.slug,
+                        district: dest.district || '',
+                        description: dest.description || '',
+                        best_time_to_visit: dest.best_time_to_visit || '',
+                        latitude: dest.latitude?.toString() || '',
+                        longitude: dest.longitude?.toString() || '',
+                        how_to_reach: dest.how_to_reach || '',
+                        is_featured: dest.is_featured,
+                        is_active: dest.is_active
+                    });
+
+                    if (dest.images) {
+                        const existingImages: DestinationImage[] = dest.images.map(img => ({
+                            id: img.id,
+                            url: img.image_url.startsWith('http') ? img.image_url : `http://localhost:8002${img.image_url}`, // Quick fix for full URL, ideally use helper
+                            // Note: We might need a helper that handles the base URL logic consistently
+                            serverUrl: img.image_url,
+                            isCover: dest.cover_image_url === img.image_url,
+                            status: 'success'
+                        }));
+                        setImages(existingImages);
+                    }
+
+                    if (accs) {
+                        setAccommodations(accs.map(a => ({
+                            id: a.id,
+                            name: a.name,
+                            type: a.type,
+                            base_price: a.base_price,
+                            base_occupancy: a.base_occupancy,
+                            extra_boarder_price: a.extra_boarder_price,
+                            destination_id: a.destination_id
+                        })));
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch destination details", error);
+                    alert("Failed to load destination details.");
+                    navigate('/destinations');
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+            fetchData();
+        }
+    }, [isEditMode, id, navigate]);
+
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
             const newImages: DestinationImage[] = Array.from(e.target.files).map(file => ({
                 id: Math.random().toString(36).substr(2, 9),
-                url: URL.createObjectURL(file), // Create local preview URL
-                isCover: images.length === 0, // First image is default cover
-                file: file
+                url: URL.createObjectURL(file), // Local preview
+                isCover: images.length === 0,
+                file: file,
+                status: 'pending'
             }));
 
-            // If we already have images, just append the new ones
-            if (images.length > 0) {
-                newImages.forEach(img => img.isCover = false);
-            }
+            // Append for UI immediately
+            setImages(prev => {
+                const updated = [...prev, ...newImages];
+                if (prev.length > 0) newImages.forEach(i => i.isCover = false);
+                return updated;
+            });
 
-            setImages([...images, ...newImages]);
+            // Trigger uploads
+            for (const img of newImages) {
+                if (!img.file) continue;
+
+                try {
+                    setImages(prev => prev.map(p => p.id === img.id ? { ...p, status: 'uploading' } : p));
+                    const { url } = await storageService.upload(img.file);
+
+                    setImages(prev => prev.map(p =>
+                        p.id === img.id ? { ...p, status: 'success', serverUrl: url } : p
+                    ));
+                } catch (error) {
+                    console.error("Upload failed", error);
+                    setImages(prev => prev.map(p => p.id === img.id ? { ...p, status: 'error' } : p));
+                }
+            }
         }
     };
 
     const handleRemoveImage = (id: string) => {
         const newImages = images.filter(img => img.id !== id);
-
-        // If we removed the cover image, make the first available image the new cover
         if (images.find(img => img.id === id)?.isCover && newImages.length > 0) {
             newImages[0].isCover = true;
         }
-
         setImages(newImages);
     };
 
     const handleSetCover = (id: string) => {
-        setImages(images.map(img => ({
-            ...img,
-            isCover: img.id === id
-        })));
+        setImages(images.map(img => ({ ...img, isCover: img.id === id })));
     };
 
     const triggerFileInput = () => {
         fileInputRef.current?.click();
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    // Accommodation Handlers
+    const addAccommodation = () => {
+        setAccommodations([...accommodations, {
+            name: '',
+            base_price: 0,
+            base_occupancy: 2,
+            extra_boarder_price: 0,
+            type: 'Room'
+        }]);
+    };
+
+    const removeAccommodation = (index: number) => {
+        const acc = accommodations[index];
+        if (acc.id) {
+            setDeletedAccommodationIds([...deletedAccommodationIds, acc.id]);
+        }
+        setAccommodations(accommodations.filter((_, i) => i !== index));
+    };
+
+    const updateAccommodation = (index: number, field: keyof AccommodationCreate, value: any) => {
+        const updated = [...accommodations];
+        updated[index] = { ...updated[index], [field]: value };
+        setAccommodations(updated);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
-        const newDestination = {
-            id: `d${Date.now()}`,
-            ...formData,
-            latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-            longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
-            // Mapping images to match expected structure if needed, or keeping simplified for now
-            // The schema has a separate table, but for the mock object we'll store basic info
-            cover_image: images.find(img => img.isCover)?.url || images[0]?.url,
-            images: images.map(img => img.url),
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-        };
+        try {
+            // Check for pending uploads
+            if (images.some(img => img.status === 'uploading')) {
+                alert("Please wait for all images to finish uploading.");
+                setIsSubmitting(false);
+                return;
+            }
 
-        mockDestinations.push(newDestination as any);
-        console.log('Created Destination:', newDestination);
+            const destinationImages = images.map(img => ({
+                image_url: img.serverUrl || '',
+                caption: '',
+                sort_order: 0
+            })).filter(img => img.image_url);
 
-        navigate('/destinations');
+            const coverImage = images.find(img => img.isCover)?.serverUrl || destinationImages[0]?.image_url;
+
+            const payload = {
+                ...formData,
+                slug: formData.slug || formData.name.toLowerCase().replace(/\s+/g, '-'),
+                latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+                longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
+                cover_image_url: coverImage,
+                images: destinationImages as any
+            };
+
+            let destinationId = id;
+
+            if (isEditMode && id) {
+                await destinationsService.update(id, payload);
+                console.log('Updated Destination:', id);
+            } else {
+                const newDestination = await destinationsService.create(payload);
+                destinationId = newDestination.id;
+                console.log('Created Destination:', newDestination);
+            }
+
+            if (destinationId) {
+                // Handle Accommodations
+                // 1. Delete removed ones
+                for (const deletedId of deletedAccommodationIds) {
+                    await accommodationsService.delete(deletedId);
+                }
+
+                // 2. Create or Update existing ones
+                for (const acc of accommodations) {
+                    if (acc.name && acc.base_price) {
+                        try {
+                            const accData = {
+                                ...acc,
+                                destination_id: destinationId,
+                                base_occupancy: Number(acc.base_occupancy),
+                                base_price: Number(acc.base_price),
+                                extra_boarder_price: Number(acc.extra_boarder_price || 0),
+                                name: acc.name!,
+                                type: acc.type || 'Room'
+                            } as AccommodationCreate;
+
+                            if (acc.id) {
+                                await accommodationsService.update(acc.id, accData);
+                            } else {
+                                await accommodationsService.create(accData);
+                            }
+                        } catch (err) {
+                            console.error("Failed to save accommodation", acc.name, err);
+                        }
+                    }
+                }
+            }
+
+            navigate('/destinations');
+        } catch (error) {
+            console.error("Failed to save destination", error);
+            alert("Failed to save destination. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const name = e.target.value;
+        const slug = name
+            .toLowerCase()
+            .trim()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+
+        setFormData({ ...formData, name, slug });
     };
 
     return (
@@ -97,7 +276,7 @@ export function CreateDestination() {
             </button>
 
             <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-slate-800">Add New Destination</h1>
+                <h1 className="text-2xl font-bold text-slate-800">{isEditMode ? 'Edit Destination' : 'Add New Destination'}</h1>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
@@ -111,7 +290,7 @@ export function CreateDestination() {
                             placeholder="e.g. Unakoti"
                             className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            onChange={handleNameChange}
                         />
                     </div>
                     <div className="space-y-2">
@@ -207,6 +386,78 @@ export function CreateDestination() {
                     />
                 </div>
 
+                {/* Accommodation Section */}
+                <div className="space-y-4 pt-4 border-t border-slate-100">
+                    <div className="flex justify-between items-center">
+                        <label className="text-sm font-medium text-slate-700">Accommodations</label>
+                        <button
+                            type="button"
+                            onClick={addAccommodation}
+                            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center"
+                        >
+                            <Plus className="h-4 w-4 mr-1" /> Add Unit
+                        </button>
+                    </div>
+
+                    {accommodations.length === 0 && (
+                        <p className="text-sm text-slate-400 italic">No accommodations added yet.</p>
+                    )}
+
+                    <div className="space-y-3">
+                        {accommodations.map((acc, index) => (
+                            <div key={index} className="flex gap-3 items-start bg-slate-50 p-3 rounded-lg border border-slate-200">
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 flex-1">
+                                    <input
+                                        type="text"
+                                        placeholder="Name (e.g. Deluxe Room)"
+                                        className="px-3 py-2 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-full"
+                                        value={acc.name}
+                                        onChange={(e) => updateAccommodation(index, 'name', e.target.value)}
+                                    />
+                                    <select
+                                        className="px-3 py-2 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-full"
+                                        value={acc.type}
+                                        onChange={(e) => updateAccommodation(index, 'type', e.target.value)}
+                                    >
+                                        <option value="Room">Room</option>
+                                        <option value="Cottage">Cottage</option>
+                                        <option value="Tent">Tent</option>
+                                        <option value="Dormitory">Dormitory</option>
+                                    </select>
+                                    <input
+                                        type="number"
+                                        placeholder="Base Price"
+                                        className="px-3 py-2 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-full"
+                                        value={acc.base_price}
+                                        onChange={(e) => updateAccommodation(index, 'base_price', e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Max Occupancy"
+                                        className="px-3 py-2 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-full"
+                                        value={acc.base_occupancy}
+                                        onChange={(e) => updateAccommodation(index, 'base_occupancy', e.target.value)}
+                                    />
+                                    <input
+                                        type="number"
+                                        placeholder="Extra Boarder Price"
+                                        className="px-3 py-2 text-sm border border-slate-300 rounded focus:ring-1 focus:ring-blue-500 w-full"
+                                        value={acc.extra_boarder_price}
+                                        onChange={(e) => updateAccommodation(index, 'extra_boarder_price', e.target.value)}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => removeAccommodation(index)}
+                                    className="text-slate-400 hover:text-red-500 p-1"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Settings Toggles */}
                 <div className="flex space-x-8 py-2">
                     <label className="flex items-center space-x-3 cursor-pointer">
@@ -283,6 +534,16 @@ export function CreateDestination() {
                                         </div>
                                     </div>
 
+                                    {/* Status Badge */}
+                                    {img.status === 'uploading' && (
+                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                            <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        </div>
+                                    )}
+                                    {img.status === 'error' && (
+                                        <div className="absolute top-2 right-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded">Error</div>
+                                    )}
+
                                     {/* Cover Badge */}
                                     {img.isCover && (
                                         <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-[10px] font-bold uppercase rounded shadow-sm flex items-center gap-1">
@@ -296,9 +557,16 @@ export function CreateDestination() {
                 </div>
 
                 <div className="flex justify-end pt-4 border-t border-slate-100">
-                    <button type="submit" className="flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+                    <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className={cn(
+                            "flex items-center px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm",
+                            isSubmitting && "opacity-70 cursor-not-allowed"
+                        )}
+                    >
                         <Save className="h-4 w-4 mr-2" />
-                        Save Destination
+                        {isSubmitting ? 'Saving...' : (isEditMode ? 'Update Destination' : 'Save Destination')}
                     </button>
                 </div>
             </form>

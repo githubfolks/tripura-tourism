@@ -74,6 +74,7 @@ function App() {
 
                 <Route path="destinations" element={<Destinations />} />
                 <Route path="destinations/new" element={<CreateDestination />} />
+                <Route path="destinations/:id/edit" element={<CreateDestination />} />
 
                 <Route path="packages" element={<Packages />} />
                 <Route path="packages/new" element={<CreatePackage />} />
