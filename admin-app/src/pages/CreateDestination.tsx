@@ -19,8 +19,7 @@ export function CreateDestination() {
         district: '',
         description: '',
         best_time_to_visit: '',
-        latitude: '',
-        longitude: '',
+        google_map_url: '',
         how_to_reach: '',
         is_featured: false,
         is_active: true
@@ -74,8 +73,7 @@ export function CreateDestination() {
         const newDestination = {
             id: `d${Date.now()}`,
             ...formData,
-            latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
-            longitude: formData.longitude ? parseFloat(formData.longitude) : undefined,
+            google_map_url: formData.google_map_url,
             // Mapping images to match expected structure if needed, or keeping simplified for now
             // The schema has a separate table, but for the mock object we'll store basic info
             cover_image: images.find(img => img.isCover)?.url || images[0]?.url,
@@ -159,29 +157,15 @@ export function CreateDestination() {
                 </div>
 
                 {/* Coordinates */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Latitude</label>
-                        <input
-                            type="number"
-                            step="any"
-                            placeholder="e.g. 24.2345"
-                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            value={formData.latitude}
-                            onChange={e => setFormData({ ...formData, latitude: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Longitude</label>
-                        <input
-                            type="number"
-                            step="any"
-                            placeholder="e.g. 91.9876"
-                            className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            value={formData.longitude}
-                            onChange={e => setFormData({ ...formData, longitude: e.target.value })}
-                        />
-                    </div>
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700">Google Map URL</label>
+                    <input
+                        type="url"
+                        placeholder="e.g. https://maps.google.com/..."
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        value={formData.google_map_url}
+                        onChange={e => setFormData({ ...formData, google_map_url: e.target.value })}
+                    />
                 </div>
 
                 {/* Descriptions */}

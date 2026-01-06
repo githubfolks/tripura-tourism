@@ -53,6 +53,12 @@ export function Destinations() {
                         </button>
                     </div>
                     <button
+                        onClick={() => navigate('/destinations/mass-update')}
+                        className="flex items-center justify-center px-4 py-2 bg-white text-slate-700 border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors shadow-sm"
+                    >
+                        Mass Update
+                    </button>
+                    <button
                         onClick={() => navigate('/destinations/new')}
                         className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >

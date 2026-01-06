@@ -22,8 +22,7 @@ export interface Destination {
     slug: string;
     description?: string;
     district?: string;
-    latitude?: number;
-    longitude?: number;
+    google_map_url?: string;
     best_time_to_visit?: string;
     how_to_reach?: string;
     is_featured: boolean;

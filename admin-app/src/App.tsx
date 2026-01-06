@@ -25,6 +25,7 @@ import { OnboardPartner } from './pages/partners/OnboardPartner';
 // CRUD Pages
 import { BookingDetails } from './pages/BookingDetails';
 import { CreateDestination } from './pages/CreateDestination';
+import { MassUpdate } from './pages/MassUpdate';
 import { CreatePackage } from './pages/CreatePackage';
 import { CreateUser } from './pages/CreateUser';
 import { CreateBooking } from './pages/CreateBooking';
@@ -73,6 +74,7 @@ function App() {
                 <Route path="users/new" element={<CreateUser />} />
 
                 <Route path="destinations" element={<Destinations />} />
+                <Route path="destinations/mass-update" element={<MassUpdate />} />
                 <Route path="destinations/new" element={<CreateDestination />} />
 
                 <Route path="packages" element={<Packages />} />

@@ -101,8 +101,7 @@ CREATE TABLE destinations (
     description TEXT,
     cover_image_url TEXT,
     district VARCHAR(100),
-    latitude DECIMAL(9,6),
-    longitude DECIMAL(9,6),
+    google_map_url TEXT,
     best_time_to_visit VARCHAR(100),
     how_to_reach TEXT,
     is_featured BOOLEAN DEFAULT FALSE,
@@ -262,6 +261,7 @@ CREATE TABLE bookings (
     amount_paid NUMERIC(12,2) DEFAULT 0,
     payment_status payment_status_enum DEFAULT 'PENDING',
     currency VARCHAR(10) DEFAULT 'INR',
+    additional_revenue NUMERIC(12,2) DEFAULT 0,
 
     booked_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
@@ -279,7 +279,9 @@ CREATE TYPE booking_status_enum AS ENUM (
     'CANCELLED',
     'COMPLETED',
     'FAILED',
-    'ON_HOLD'
+    'ON_HOLD',
+    'CHECKED_IN',
+    'CHECKED_OUT'
 );
 CREATE TABLE booking_customers (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -456,4 +458,28 @@ CREATE TABLE partner_settlements (
 
     status VARCHAR(20),
     settled_at TIMESTAMP
+);
+
+CREATE TABLE accommodation_pricing (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    accommodation_id UUID REFERENCES accommodations(id) ON DELETE CASCADE,
+    
+    price NUMERIC(10,2) NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_to DATE, 
+    -- If NULL, interpreted as permanent/open-ended from start date
+    
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE accommodation_blocks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    accommodation_id UUID REFERENCES accommodations(id) ON DELETE CASCADE,
+    
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    
+    reason TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
 );
